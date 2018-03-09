@@ -1,2 +1,2 @@
 # foldershare
-SeedMe foldershare
+Readme information for foldershare module
