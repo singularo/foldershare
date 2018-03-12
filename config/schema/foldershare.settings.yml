@@ -1,0 +1,60 @@
+# Declares module settings.
+
+foldershare.settings:
+  type: mapping
+  label: 'FolderShare module settings'
+  mapping:
+#
+# The storage scheme selects between 'public' or 'private'.
+    file_scheme:
+      type: string
+      label: 'File storage scheme'
+#
+# The directory where files are stored.
+    file_directory:
+      type: string
+      label: 'File subdirectory on the server'
+#
+# The set of file name extensions to allow.
+    file_allowed_extensions:
+      type: string
+      label: 'Allowed filename extensions'
+#
+# Whether to restrict file name extensions.
+    file_restrict_extensions:
+      type: bool
+      label: 'Restrict filename extensions'
+#
+# The maximum size of an uploaded file.
+    upload_max_file_size:
+      type: integer
+      label: 'Maximum uploaded file size'
+
+#
+# The maximum number of files uploaded at once.
+    upload_max_file_number:
+      type: integer
+      label: 'Maximum number of files to upload at once'
+
+#
+# Whether sharing is enabled.
+    sharing_allowed:
+      type: bool
+      label: 'Enable sharing'
+
+#
+# Whether sharing with anonymous is allowed.
+    sharing_allowed_with_anonymous:
+      type: bool
+      label: 'Enable sharing with anonymous users'
+
+#
+# Whether to restrict commands on the command menu.
+    command_menu_restrict:
+      type: bool
+      label: 'Restrict command plugins'
+#
+# Allowed list of command plugins to include in the command menu.
+    command_menu_allowed:
+#      type: sequence
+      label: 'Allowed command plugins on the command menu'

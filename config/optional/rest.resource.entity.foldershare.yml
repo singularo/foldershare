@@ -1,0 +1,20 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - foldershare
+    - serialization
+    - user
+id: entity.foldershare
+plugin_id: 'entity:foldershare'
+granularity: resource
+configuration:
+  methods:
+    - GET
+    - POST
+    - DELETE
+    - PATCH
+  formats:
+    - json
+  authentication:
+    - cookie

@@ -1,0 +1,14 @@
+# Defines a 'search_index' view mode for folder views.
+#
+# This view mode is used to generate a minimalist keywords-only view
+# of the folder to support building search indexes.
+langcode: en
+status: false
+dependencies:
+  enforced:
+    module:
+      - foldershare
+id: foldershare.search_index
+label: 'Search index'
+targetEntityType: foldershare
+cache: true

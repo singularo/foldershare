@@ -1,0 +1,23 @@
+# Defines a 'default' view mode for folder views.
+langcode: en
+status: true
+dependencies:
+  module:
+    - datetime
+    - field
+    - file
+    - filter
+    - image
+    - link
+    - media
+    - options
+    - system
+    - text
+    - user
+  enforced:
+    module:
+      - foldershare
+id: foldershare.default
+label: 'Default'
+targetEntityType: foldershare
+cache: true

@@ -1,0 +1,46 @@
+# Sets initial values for the module's settings.
+
+# How files should be stored on the server:
+#       'public'    = store in the public file system
+#       'private'   = store in the private file system
+file_scheme: public
+
+# The name of a subdirectory in which to place files.
+file_directory: foldershare
+
+# Allowed filename extensions.
+file_allowed_extensions: '1st 3ds a aac accda accdb accde accdr accdt ade adn adp aiff asc ascii asp aspx au avi bash bat blend bmp bz2 c c++ cab cdb cgi cgm cmake config cp cpio cpp cs csh css csv csx cxx dae daq dat data dmg doc docb docm docx dot dotm dotx dtd dxf eps f fig fits fits flac gif gz h h5 hdf hdf5 hpp htm html ico inc include info ini install iso j2k jar java jp2 jpeg jpf jpg jpm jpx js json jsp laccdb ldb less ltx m m4a m4p m4v maf make mam man maq mar mat mat mda mdb mde mdf mdn mdt mdw mj2 mkv mlv mn module mogg mov mp3 mp4 mpeg mpg mpv nc oga ogg p pbm pdf perl pgm phar php pl pm png pnm pot potm potx ppam ppm pps ppsm ppsx ppt pptm pptx prl proj ps py pyc python qt r rar ras rdf readme rss rtf sass scss sh shar sit sitx sldm sldx stl svg swift tar tbz2 tex text tga tgz tif tiff tsv twig txt wav wbk webm webp wma wmv xlm xls xlsm xlsx xlt xltm xltx xml xsd xsl yaml yml z zip'
+
+# Whether to restrict file name extensions.
+file_restrict_extensions: false
+
+# The maximum size of an uploaded file.
+upload_max_file_size: 2097152
+
+# The maximum number of files uploaded at once.
+upload_max_file_number: 10
+
+# Whether sharing is enabled.
+sharing_allowed: true
+
+# Whether sharing with anonymous is allowed.
+sharing_allowed_with_anonymous: true
+
+# Whether to restrict commands on the command menu.
+command_menu_restrict: false
+
+# Allowed list of command plugins to include in the command menu.
+command_menu_allowed:
+  - foldersharecommand_archive
+  - foldersharecommand_change_owner
+  - foldersharecommand_copy
+  - foldersharecommand_delete
+  - foldersharecommand_download
+  - foldersharecommand_duplicate
+  - foldersharecommand_edit
+  - foldersharecommand_move
+  - foldersharecommand_new_folder
+  - foldersharecommand_rename
+  - foldersharecommand_share
+  - foldersharecommand_unarchive
+  - foldersharecommand_upload_files

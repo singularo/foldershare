@@ -1,0 +1,97 @@
+langcode: en
+status: true
+dependencies:
+  enforced:
+    module:
+      - foldershare
+  module:
+    - comment
+    - file
+    - foldershare
+    - image
+    - media
+    - text
+    - user
+_core:
+  default_config_hash: izyH7Z-fW8N-aB8jaZFF323Esr04aGk9X_c5QR_H2no
+id: foldershare.foldershare.default
+targetEntityType: foldershare
+bundle: foldershare
+mode: default
+content:
+  changed:
+    label: inline
+    type: timestamp
+    weight: 5
+    region: content
+    settings:
+      date_format: short
+      custom_date_format: ''
+      timezone: ''
+    third_party_settings: {  }
+  description:
+    label: hidden
+    type: text_default
+    weight: 6
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  field_foldershare_comments:
+    weight: 7
+    label: above
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    type: comment_default
+    region: content
+  file:
+    label: hidden
+    type: file_default
+    weight: 1
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  folder_table:
+    weight: 0
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  image:
+    label: hidden
+    type: image
+    weight: 2
+    region: content
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+  media:
+    label: hidden
+    type: media_thumbnail
+    weight: 3
+    region: content
+    settings:
+      image_style: ''
+      image_link: ''
+    third_party_settings: {  }
+  uid:
+    label: inline
+    type: author
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  created: true
+  folder_path: true
+  grantauthoruids: true
+  grantviewuids: true
+  id: true
+  kind: true
+  mime: true
+  name: true
+  parentid: true
+  rootid: true
+  size: true
+

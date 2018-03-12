@@ -1,0 +1,14 @@
+# Defines a 'search_result' view mode for folder views.
+#
+# This view mode is used to generate a reduced view of the folder
+# to be presented in a list of search results.
+langcode: en
+status: false
+dependencies:
+  enforced:
+    module:
+      - foldershare
+id: foldershare.search_result
+label: 'Search result highlighting input'
+targetEntityType: foldershare
+cache: true

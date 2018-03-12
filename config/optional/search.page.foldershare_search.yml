@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - foldershare
+id: foldershare_search
+label: 'Folders and files'
+path: foldershare
+weight: -10
+plugin: foldershare_search
+configuration:
+  search_items:
+    file_content: true
