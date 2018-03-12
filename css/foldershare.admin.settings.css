@@ -1,0 +1,95 @@
+/**
+ * @file
+ * FolderShare administrator settings page styling.
+ */
+
+/*-----------------------------------------------------------------------
+ *
+ * Tab layout.
+ *
+ * These rules style vertical tabs and tab panes.
+ *
+ *-----------------------------------------------------------------------*/
+
+/*
+ * Narrow default vertical tab widths to less space is wasted, leaving
+ * more page room for the settings panes.
+ */
+#drupal-foldershare-form-adminsettings .vertical-tabs__menu {
+  width: 8em;
+}
+#drupal-foldershare-form-adminsettings .vertical-tabs__panes {
+  margin-left: 8em;
+}
+
+/*
+ * Each vertical tab pane begins with an <h2> title, followed by
+ * a description. Make the title bigger and bold.
+ */
+details.foldershare-settings-tab h2 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
+/*
+ * Add a border below the tab pane title and subtitle.
+ */
+details.foldershare-settings-tab .details-description {
+  border-bottom: 1px solid #000;
+}
+
+/*
+ * Each group of settings on a tab pane begins with an <h3> title,
+ * followed by a section block with a description and form widgets.
+ * Make the title bigger and bold. Indent the section. Put labels
+ * beside their form widgets.
+ */
+details.foldershare-settings-tab h3 {
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+/*
+ * Add a border below each section on a tab pane.
+ */
+details.foldershare-settings-tab .foldershare-settings-section {
+  margin-bottom: 1em;
+  border-bottom: 1px solid #ccc;
+}
+
+details.foldershare-settings-tab dt {
+  font-weight: bold;
+}
+
+/*
+ * Make all labels beside their inputs.
+ */
+details.foldershare-settings-tab label {
+  display: inline-block;
+  min-width: 7em;
+}
+
+#edit-foldershare-command-menu-choices {
+  margin-left: 2em;
+}
+
+#edit-foldershare-command-menu-allowed div.form-item input {
+  vertical-align: top;
+}
+
+/*
+ * Scoot over buttons so they line up under text above them.
+ */
+details.foldershare-settings-tab .button {
+  margin-left: 0;
+}
+#edit-foldershare-file-restore-allowed-extensions {
+  margin-bottom: 1em;
+}
+
+/*
+ * Italicize default value notes.
+ */
+details.foldershare-settings-tab .foldershare-settings-section-default {
+  font-style: italic;
+}

@@ -1,0 +1,40 @@
+/**
+ * @file
+ * FolderShare mime type icons.
+ */
+
+/*
+ * Define a folder icon at the same size as the default Drupal file icons.
+ */
+.file--mime-rootfolder-directory,
+.file--mime-folder-directory {
+  background-image: url(../images/folder-icon.16x16.png);
+  background-repeat: no-repeat;
+}
+
+/*
+ * When the MIME type icon is stand-alone and a link, get rid of all
+ * border changes on mouse-over.
+ */
+.foldershare-mimeicon,
+.foldershare-mimeicon:hover,
+.foldershare-mimeicon:active,
+.foldershare-mimeicon:focus {
+  border-bottom: none;
+}
+
+/*
+ * Override themes (such as Bootstrap) that try to change .file styling.
+ * Since .file is usually added to file references, these themes are
+ * changing the styling to enhance file references with icons, file
+ * sizes, etc.
+ *
+ * However, we also attach .file styling to entity references in
+ * folder contents tables. In this context, the theme changes to .file
+ * just make a mess. We need to override it to put it back to normal.
+ */
+div.foldershare-contents-table .file {
+  display: inline;
+  font-size: 100%;
+  margin: 0;
+}

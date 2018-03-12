@@ -1,0 +1,422 @@
+/**
+ * Module-wide base styling
+ * ------------------------
+ * Defines base styling for the module's presentation of content.
+ */
+
+/*-----------------------------------------------------------------------
+ *
+ * Generic.
+ *
+ * These rules provide some generic styling.
+ *
+ *-----------------------------------------------------------------------*/
+
+.foldershare-warning {
+  color: #b00;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Share form.
+ *
+ * These rules style the sharing form and its list of users.
+ *
+ *-----------------------------------------------------------------------*/
+
+.foldershare-share-table thead tr th:nth-child(1),
+.foldershare-share-table tbody tr td:nth-child(1) {
+  width: 100%;
+}
+.foldershare-share-table thead tr th:nth-child(2),
+.foldershare-share-table tbody tr td:nth-child(2) {
+  min-width: 13em;
+  white-space: nowrap;
+}
+.foldershare-share-table .foldershare-share-subheader span,
+.foldershare-share-table .foldershare-share-row .form-radios .form-item {
+  display: inline-block;
+  min-width: 4em;
+}
+.foldershare-share-table .foldershare-share-row .description {
+  font-style: italic;
+  padding-left: 1em;
+}
+
+/*
+ * Bootstrap-based themes wrap every form element in a <div>.
+ * Unfortunately, when creating horizontal rows of radio buttons,
+ * like in this form, each of those <div>s become blocks and the
+ * radio buttons end up lined up vertically, not horizontally.
+ */
+.foldershare-share-table tr.foldershare-share-row td div.form-item,
+.foldershare-share-table tr.foldershare-share-row td div.radio {
+  display: inline;
+  position: static;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+.foldershare-share-table tr.foldershare-share-row td div.form-item label,
+.foldershare-share-table tr.foldershare-share-row td div.radio label {
+  display: inline;
+}
+.foldershare-share-table tr.foldershare-share-row td div.form-item input,
+.foldershare-share-table tr.foldershare-share-row td div.radio input {
+  position: static;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Misc forms.
+ *
+ *-----------------------------------------------------------------------*/
+
+form.drupal-foldershare-form-editcommand {
+  margin-top: 0;
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.25);
+  clear: both;
+  padding: 10px;
+}
+form.drupal-foldershare-form-editcommand .form-actions {
+  padding: 10px;
+  border-top: 1px solid #ccc;
+  background: #f0f0f0;
+  margin-left: -10px;
+  margin-right: -10px;
+  margin-bottom: -10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+form.drupal-foldershare-form-editcommand .form-item-foldershare-rename input {
+  display: inline-block;
+  width: 100%;
+}
+
+form.drupal-foldershare-form-editcommand .foldershare-destination {
+  width: 100%;
+}
+
+form.drupal-foldershare-form-editcommand .form-item-foldershare-destination {
+  margin-bottom: 0.5em;
+}
+form.drupal-foldershare-form-editcommand .foldershare-open-folder {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  min-width: 10em;
+  width: 10em;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Entity page.
+ *
+ * These rules style the entity view page.
+ *
+ *-----------------------------------------------------------------------*/
+
+/**
+ * Undo the strange styling field.css does on entity references. They
+ * should not have a different font, font size, padding, etc.
+ */
+.foldershare-content .field--type-entity-reference .field__label {
+  font-size: inherit;
+  font-weight: bold;
+  padding-right: 0.5em;
+}
+.foldershare-content .field--type-entity-reference {
+  font-family: inherit;
+  margin: 0;
+}
+
+/**
+ * Make all the labels of similar width. This only works for the
+ * common labels, which are fairly short.
+ */
+.foldershare-content .field__label {
+  min-width: 8em;
+}
+
+/**
+ * Large text fields with more/less buttons.
+ */
+.foldershare-text {
+  overflow: hidden;
+}
+
+/**
+ * Hide both buttons by default in case the browser does not support
+ * Javascript. If scripting is supported, the script will show the
+ * buttons if appropriate.
+ */
+.foldershare-text-more {
+  clear: both;
+  float: right;
+  cursor: pointer;
+  display: none;
+}
+
+.foldershare-text-less {
+  clear: both;
+  float: right;
+  cursor: pointer;
+  display: none;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Contents table.
+ *
+ * These rules style the views-generated table of entity children of
+ * a folder entity.
+ *
+ * For themes based upon Drupal core's "Classy", Views tables are marked
+ * with the ".views-table" class. For other themes, the table has no
+ * well-known class and we must rely upon a nesting order.
+ *
+ * For themes that use "Bootstrap", tables are often wrapped in an
+ * extra <div>. Again, there is no well-known class we can use, so we
+ * have to rely upon selecting based upon a nesting order.
+ *
+ *-----------------------------------------------------------------------*/
+
+div.foldershare-contents-table {
+  margin-top: 0;
+  margin-bottom: 1em;
+  border: 1px solid #ccc;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.25);
+  clear: both;
+  padding-left: 4px;
+  padding-right: 4px;
+  padding-top: 4px;
+  padding-bottom: 0;
+}
+
+/*
+ * Make the contents table use the full width of the area.
+ */
+div.foldershare-contents-table table.views-table,
+div.foldershare-contents-table div.views-form > form > table,
+div.foldershare-contents-table div.views-form > form > div > table {
+  width: 100%;
+  border-collapse: collapse;
+  /* Override table.css to use the site theme's font. */
+  font-family: inherit;
+}
+
+/*
+ * Add an underline under the header.
+ */
+div.foldershare-contents-table table.views-table thead tr,
+div.foldershare-contents-table div.views-form > form > table thead tr,
+div.foldershare-contents-table div.views-form > form > div > table thead tr {
+  border-bottom: 1px solid #ccc;
+}
+
+/*
+ * For the table's rows, adjust default spacing.
+ */
+div.foldershare-contents-table table.views-table thead tr,
+div.foldershare-contents-table table.views-table tbody tr,
+div.foldershare-contents-table table.views-table tfoot tr,
+div.foldershare-contents-table div.views-form > form > table thead tr,
+div.foldershare-contents-table div.views-form > form > table tbody tr,
+div.foldershare-contents-table div.views-form > form > table tfoot tr,
+div.foldershare-contents-table div.views-form > form > div > table thead tr,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr,
+div.foldershare-contents-table div.views-form > form > div > table tfoot tr {
+  padding: 0;
+}
+div.foldershare-contents-table table.views-table thead tr td,
+div.foldershare-contents-table table.views-table tbody tr td,
+div.foldershare-contents-table table.views-table tfoot tr td,
+div.foldershare-contents-table div.views-form > form > table thead tr td,
+div.foldershare-contents-table div.views-form > form > table tbody tr td,
+div.foldershare-contents-table div.views-form > form > table tfoot tr td,
+div.foldershare-contents-table div.views-form > form > div > table thead tr td,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr td,
+div.foldershare-contents-table div.views-form > form > div > table tfoot tr td {
+  padding-right: 5px;
+  padding-left: 5px;
+}
+div.foldershare-contents-table table.views-table thead tr,
+div.foldershare-contents-table div.views-form > form > table thead tr,
+div.foldershare-contents-table div.views-form > form > div > table thead tr {
+  text-align: left;
+}
+
+/*
+ * For the checkbox column in the table's rows, remove the padding
+ * around the form element so that the row tightens up.
+ */
+div.foldershare-contents-table table.views-table td.views-field-foldershare-views-field-baseui div.form-item,
+div.foldershare-contents-table div.views-form > form > table td.views-field-foldershare-views-field-baseui div.form-item,
+div.foldershare-contents-table div.views-form > form > div > table td.views-field-foldershare-views-field-baseui div.form-item {
+  margin: 0;
+}
+
+/*
+ * Reduce the blatent even/odd striping from table.css with
+ * something much more subtle. Also, since default views do
+ * not support zebra striping, add it back in.
+ */
+div.foldershare-contents-table table.views-table tbody tr:nth-child(odd),
+div.foldershare-contents-table table.views-table tbody tr.odd,
+div.foldershare-contents-table div.views-form > form > table tbody tr:nth-child(odd),
+div.foldershare-contents-table div.views-form > form > table tbody tr.odd,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr:nth-child(odd),
+div.foldershare-contents-table div.views-form > form > div > table tbody tr.odd {
+  background: rgba(0,0,0,0.03);
+}
+div.foldershare-contents-table table.views-table tbody tr:nth-child(even),
+div.foldershare-contents-table table.views-table tbody tr.even,
+div.foldershare-contents-table div.views-form > form > table tbody tr:nth-child(even),
+div.foldershare-contents-table div.views-form > form > table tbody tr.even,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr:nth-child(even),
+div.foldershare-contents-table div.views-form > form > div > table tbody tr.even {
+  background: rgba(0,0,0,0.00);
+}
+
+/*
+ * Get rid of the elements.css row underlines.
+ */
+div.foldershare-contents-table table.views-table thead tr th a:hover,
+div.foldershare-contents-table table.views-table thead tr th a:focus,
+div.foldershare-contents-table table.views-table thead tr th a,
+div.foldershare-contents-table div.views-form > form > table thead tr th a:hover,
+div.foldershare-contents-table div.views-form > form > table thead tr th a:focus,
+div.foldershare-contents-table div.views-form > form > table thead tr th a,
+div.foldershare-contents-table div.views-form > form > div > table thead tr th a:hover,
+div.foldershare-contents-table div.views-form > form > div > table thead tr th a:focus,
+div.foldershare-contents-table div.views-form > form > div > table thead tr th a {
+  text-decoration: none;
+  border-bottom: none;
+}
+
+/*
+ * Get rid of the tablesort.css background color on the current
+ * sort column. The arrow on the column header is sufficient.
+ */
+div.foldershare-contents-table table.views-table tbody tr td.is-active,
+div.foldershare-contents-table div.views-form > form > table tbody tr td.is-active,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr td.is-active {
+  background-color: transparent;
+}
+
+/*
+ * Get rid of the tableselect.css background color on <td> since
+ * we set it on <tr>.
+ */
+div.foldershare-contents-table table.views-table tbody tr.selected td,
+div.foldershare-contents-table div.views-form > form > table tbody tr.selected td,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr.selected td {
+  background: transparent;
+}
+
+/*
+ * Set a selection color that applies to the entire row.
+ */
+div.foldershare-contents-table table.views-table tbody td.is-active,
+div.foldershare-contents-table div.views-form > form > table tbody td.is-active,
+div.foldershare-contents-table div.views-form > form > div > table tbody td.is-active {
+  background: transparent;
+}
+div.foldershare-contents-table table.views-table tbody tr.selected,
+div.foldershare-contents-table div.views-form > form > table tbody tr.selected,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr.selected {
+  background: #fff;
+  filter: invert(15%);
+}
+
+/*
+ * Set a hover color that applies to the entire row.
+ */
+div.foldershare-contents-table table.views-table tbody tr:hover,
+div.foldershare-contents-table table.views-table tbody tr:nth-child(odd):hover,
+div.foldershare-contents-table table.views-table tbody tr:nth-child(odd):active,
+div.foldershare-contents-table table.views-table tbody tr:nth-child(even):hover,
+div.foldershare-contents-table table.views-table tbody tr:nth-child(even):active,
+div.foldershare-contents-table div.views-form > form > table tbody tr:hover,
+div.foldershare-contents-table div.views-form > form > table tbody tr:nth-child(odd):hover,
+div.foldershare-contents-table div.views-form > form > table tbody tr:nth-child(odd):active,
+div.foldershare-contents-table div.views-form > form > table tbody tr:nth-child(even):hover,
+div.foldershare-contents-table div.views-form > form > table tbody tr:nth-child(even):active,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr:hover,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr:nth-child(odd):hover,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr:nth-child(odd):active,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr:nth-child(even):hover,
+div.foldershare-contents-table div.views-form > form > div > table tbody tr:nth-child(even):active {
+  background: #fff;
+  color: inherit;
+  filter: invert(10%);
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Contents table pager.
+ *
+ *-----------------------------------------------------------------------*/
+
+/**
+ * Give the pager area some padding.
+ */
+div.foldershare-contents-table .pager {
+  margin: 0 4px 0 4px;
+  text-align: center;
+}
+div.foldershare-contents-table .pager ul {
+  padding-top: 4px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Contents table footer.
+ *
+ * For themes based upon Drupal core's "Classy", a footer on a view is
+ * marked with the ".view-footer" class. For other themes, the element has no
+ * well-known class and we must rely upon a nesting order.
+ *
+ *-----------------------------------------------------------------------*/
+
+/**
+ * Give the table footer a background and center its text.
+ */
+div.foldershare-contents-table footer.view-footer,
+div.foldershare-contents-table div.view-footer,
+div.foldershare-contents-table > footer {
+  border-top: 1px solid #ddd;
+  background: #f0f0f0;
+  text-align: center;
+  margin-left: -4px;
+  margin-right: -4px;
+  margin-top: 0;
+  margin-bottom: 0;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Contents table on a non-folder entity.
+ *
+ *-----------------------------------------------------------------------*/
+
+/*
+ * When showing non-folder entities, there are no children to list in the
+ * table, but the table's header is still needed for the UI it provides.
+ * So, hide the table and the responsive columns message.
+ */
+.foldershare-nonfolder-table .views-element-container {
+  display: none;
+}

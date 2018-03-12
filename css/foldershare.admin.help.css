@@ -1,0 +1,36 @@
+/**
+ * @file
+ * FolderShare administrator help page.
+ */
+
+/*
+ * Highlight section titles.
+ */
+.foldershare-admin-help h3 {
+  border-top: 1px solid #ccc;
+}
+
+/*
+ * Indent bullet lists.
+ */
+.foldershare-admin-help ul,
+.foldershare-admin-help dl {
+  margin: 0.25em 0 0.25em 1.5em;
+  margin-left: 1em;
+}
+
+ul,
+.foldershare-admin-help ul {
+  padding-left: 1.5em;
+}
+
+.foldershare-admin-help-recommend-list li {
+  margin-bottom: 1.0em;
+}
+
+/*
+ * Add a margin at the bottom of the help section.
+ */
+.foldershare-admin-help {
+  margin-bottom: 2em;
+}

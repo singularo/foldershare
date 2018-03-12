@@ -1,0 +1,194 @@
+/**
+ * @file
+ * FolderShare enhanced user interface styling.
+ *
+ * This CSS file is only included on pages that include the enhanced UI
+ * form, which always precedes a folder contents table.
+ */
+
+/*-----------------------------------------------------------------------
+ *
+ * Toolbar.
+ *
+ * These rules style the toolbar above the contents table.
+ *
+ *-----------------------------------------------------------------------*/
+
+/*
+ * Add a border and spacing around the form to give it a toolbar-ish
+ * style.
+ */
+form.drupal-foldershare-form-viewenhancedui {
+  background: #eee;
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 0px 0px 2px 0px rgba(0,0,0,0.25);
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 4px;
+  padding-right: 0;
+}
+
+.foldershare-nonfolder-table form.drupal-foldershare-form-viewenhancedui {
+  background: none;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/*
+ * Remove the margin added by some themes to form groups. It interferes
+ * with the toolbar styling of this form.
+ */
+div.drupal_foldershare_form_viewenhancedui-ui {
+  margin-bottom: 0;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Menus.
+ *
+ * These rules style the command menu on the toolbar.
+ *
+ *-----------------------------------------------------------------------*/
+
+/*
+ * Give the menu a border and shadow.
+ */
+.drupal_foldershare_form_viewenhancedui-command-menu,
+.drupal_foldershare_form_viewenhancedui-command-menu.ui-menu,
+.drupal_foldershare_form_viewenhancedui-command-menu.ui-widget,
+.drupal_foldershare_form_viewenhancedui-command-menu.ui-widget-content {
+  /* Override theme.css and give the menu an opaque background. */
+  background: #fff;
+  /* Override theme.css and give the menu a border. */
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+  border-radius: 2px;
+  box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.25);
+  line-height: 1.2em;
+}
+
+/*
+ * Override menu.css so that menu items don't change their margins
+ * and borders when they get the focus. This causes the menu to
+ * jump about in an odd way.
+ */
+.drupal_foldershare_form_viewenhancedui-command-menu .ui-state-focus,
+.drupal_foldershare_form_viewenhancedui-command-menu .ui-state-active {
+  margin: 0;
+}
+.drupal_foldershare_form_viewenhancedui-command-menu .ui-menu-item {
+  background: #fff;
+  border: none;
+  white-space: nowrap;
+}
+.drupal_foldershare_form_viewenhancedui-command-menu .ui-state-enabled.ui-menu-item:hover {
+  background: #bbb;
+  border: none;
+}
+.drupal_foldershare_form_viewenhancedui-command-menu .ui-state-enabled.ui-menu-item:active {
+  background: #ddd;
+  border: none;
+}
+.drupal_foldershare_form_viewenhancedui-command-menu .ui-state-enabled.ui-menu-item:focus {
+  border: none;
+}
+
+/*
+ * Override theme.css to insure that menu separators are always at full
+ * opacity, even when disabled.
+ */
+.drupal_foldershare_form_viewenhancedui-command-menu-item.ui-menu-divider,
+.drupal_foldershare_form_viewenhancedui-command-menu-item.ui-menu-divider.ui-state-disabled {
+  opacity: 1.0;
+  border-top: 1px solid #aaa;
+}
+
+/**
+ * Prepare the command menu for positioning using Javascript based upon
+ * a click on the menu button.
+ */
+.drupal_foldershare_form_viewenhancedui-command-menu {
+  position: absolute;
+  z-index: 1000;
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Menu button.
+ *
+ * These rules style the command menu button that triggers the menu.
+ *
+ *-----------------------------------------------------------------------*/
+
+/*
+ * Style a menu button to trigger the menu. Give it a border and shadow.
+ * Vary the size and icon based upon the screen size.
+ */
+.drupal_foldershare_form_viewenhancedui-command-menu-button {
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+  box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.1);
+  padding: 4px;
+  width: 32px;
+  height: 32px;
+  background: #fff url("../images/menu-icon.normal.28x28.png") no-repeat center center !important;
+}
+.drupal_foldershare_form_viewenhancedui-command-menu-button:hover {
+  background: #fff url("../images/menu-icon.hover.28x28.png") no-repeat center center !important;
+}
+
+/*
+ * Hide the text in the button since we're using an icon instead.
+ *
+ * Unfortunately, some themes mess with the content of <button>s,
+ * such as Showcase Lite and News+ Lite. This changes the <span>
+ * around the button text and deletes its class.
+ *
+ * So, while we put ".ui-button-text" on that span, we cannot
+ * count on it still being there.
+ */
+.drupal_foldershare_form_viewenhancedui-command-menu-button span {
+  display: none;
+}
+
+
+@media (max-width: 600px) {
+  /*
+   * Use a larger finger-sized menu button on smaller screens.
+   */
+  .drupal_foldershare_form_viewenhancedui-command-menu-button {
+    width: 48px;
+    height: 48px;
+    background: #fff url("../images/menu-icon.normal.44x44.png") no-repeat center center !important;
+  }
+  .drupal_foldershare_form_viewenhancedui-command-menu-button:hover {
+    background: #fff url("../images/menu-icon.hover.44x44.png") no-repeat center center !important;
+  }
+}
+
+/*-----------------------------------------------------------------------
+ *
+ * Dialogs.
+ *
+ *-----------------------------------------------------------------------*/
+
+/*
+ * Give dialogs basic styling since most themes do not.
+ */
+div.foldershare-dialog {
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #bbb;
+  border-bottom: 1px solid #aaa;
+  border-radius: 4px 4px 0 0;
+  box-shadow: 1px 1px 2px 0px rgba(0,0,0,0.5);
+}

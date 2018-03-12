@@ -1,0 +1,46 @@
+/**
+ * @file
+ * FolderShare administrator usage report page styling.
+ */
+
+/*
+ * Style the report table caption.
+ */
+.foldershare-admin-usage-table caption {
+  font-weight: bold;
+  text-align: center;
+  font-size: 1.1em;
+  padding-bottom: 0.5em;
+}
+
+/*
+ * Tighten table row spacing.
+ */
+.foldershare-admin-usage-table td {
+  padding: 0;
+  padding-right: 1em;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
+/*
+ * Right-align numeric columns.
+ */
+.foldershare-admin-usage-table-roots,
+.foldershare-admin-usage-table-folders,
+.foldershare-admin-usage-table-files,
+.foldershare-admin-usage-table-bytes {
+  text-align: right;
+  width: 8em;
+}
+
+/*
+ * Highlight the total row at the bottom of the table.
+ */
+.foldershare-admin-usage-table-total {
+  font-weight: bold;
+  border-bottom: 0;
+}
+.foldershare-admin-usage-table-total td {
+  border-top: 1px solid #000000;
+}
