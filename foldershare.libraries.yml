@@ -1,0 +1,54 @@
+#
+# Declares libraries of CSS and Javascript used by the module.
+#
+
+# Main module library.
+# - Base styling used on most module pages.
+foldershare.module:
+  version: VERSION
+  css:
+    theme:
+      /core/themes/classy/css/components/file.css: {}
+      css/foldershare.module.css: {}
+      css/foldershare.mime.css: {}
+  dependencies:
+    - core/drupal.tableresponsive
+
+# Admin library.
+# - Admin page styling used on settings, help, and admin form pages.
+foldershare.module.admin:
+  version: VERSION
+  css:
+    theme:
+      css/foldershare.admin.css: {}
+      css/foldershare.admin.settings.css: {}
+      css/foldershare.admin.help.css: {}
+      css/foldershare.admin.usage.css: {}
+
+# Enhanced UI library.
+# - Used when the enhanced UI plugin is installed in views.
+# - Provides styling and the Javascript UI.
+foldershare.module.enhancedui:
+  version: VERSION
+  css:
+    theme:
+      css/foldershare.enhancedui.css: {}
+  js:
+    js/foldershare.enhancedui.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/jquery.ui.dialog
+    - core/jquery.ui.menu
+    - core/drupal
+    - core/drupalSettings
+    - core/drupal.ajax
+    - core/drupal.dialog.ajax
+
+# Cropped text more/less behavior.
+foldershare.module.text.moreless:
+  version: VERSION
+  js:
+    js/foldershare.text.moreless.js: {}
+  dependencies:
+    - core/jquery

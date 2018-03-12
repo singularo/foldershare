@@ -1,0 +1,358 @@
+<?php
+
+/**
+ * @file
+ * Handles module installation, uninstallation, and version updates.
+ */
+
+/**
+ * @defgroup foldershare FolderShare
+ *
+ * @{
+ * This module manages a hierarchy of files, folders, and subfolders,
+ * along with access controls that govern how content may be shared
+ * among users.
+ *
+ * Folders may nest within other folders to create a folder tree like
+ * that found in file systems for a Windows, Mac, and Linux system.
+ * Each folder has a required name, an optional description, and a list of
+ * child files and subfolders. There may be multiple folder trees,
+ * with each one begun on a "root folder" (a.k.a. "top-level folder").
+ *
+ * Folders may be created, deleted, copied, moved, renamed, downloaded,
+ * uploaded, compressed, and edited. Folders are fieldable and, by default,
+ * contain a description field. Sites may add more fields, such as for
+ * copyright messages, search keywords, images, and comments.
+ *
+ * Root folders are each owned by a user. That user may share a folder
+ * tree by granting viewing or editing access to specific users. If they
+ * grant access to the site's anonymous user, the folder tree becomes
+ * published for public access, if the anonymous user has been granted
+ * FolderShare view permission.
+ *
+ * The module provides the shared folder data model and access control,
+ * and generates pages that list root folders and folder contents. The
+ * module also provides an optional breadcrumb that shows the folder
+ * hierarchy, and includes a module settings page with which the site
+ * administrator may control specific module features.
+ * @}
+ *
+ * @namespace Drupal::foldershare
+ * Parent namespace for the module.
+ *
+ * @namespace Drupal::foldershare::Ajax
+ * Ajax support classes for dialogs and other communications.
+ *
+ * @namespace Drupal::foldershare::Annotation
+ * Annotation definitions, such as those for FolderShare commands.
+ *
+ * @namespace Drupal::foldershare::Entity
+ * Entity type classes and support classes for controllers and builders.
+ *
+ * @namespace Drupal::foldershare::Entity::Builder
+ * Entity type view builders to present entities and breadcrumbs.
+ *
+ * @namespace Drupal::foldershare::Entity::Controller
+ * Entity type controllers to present entities.
+ *
+ * @namespace Drupal::foldershare::Entity::Exception
+ * Entity exception types to report problems.
+ *
+ * @namespace Drupal::foldershare::Form
+ * Administrator and user forms for entities and module settings.
+ *
+ * @namespace Drupal::foldershare::Plugin
+ * Plugin functionality.
+ *
+ * @namespace Drupal::foldershare::Plugin::Field
+ * Field-related plugins.
+ *
+ * @namespace Drupal::foldershare::Plugin::Field::FieldFormatter
+ * Field formatter plugins, such as formatting links with file MIME types.
+ *
+ * @namespace Drupal::foldershare::Plugin::FolderShareCommand
+ * FolderShareCommand plugins, such as those to create and delete content.
+ *
+ * @namespace Drupal::foldershare::Plugin::QueueWorker
+ * Queue worker plugins triggered by CRON, such as to update folder sizes.
+ *
+ * @namespace Drupal::foldershare::Plugin::Search
+ * Search plugins to index content and present results.
+ *
+ * @namespace Drupal::foldershare::Plugin::views
+ * Views-related plugins.
+ *
+ * @namespace Drupal::foldershare::Plugin::views::field
+ * Views field plugins for a basic user interface.
+ *
+ * @namespace Drupal::Tests
+ * Tests.
+ *
+ * @namespace Drupal::Tests::foldershare
+ * Tests for the module.
+ *
+ * @namespace Drupal::Tests::foldershare::Unit
+ * Unit tests for the module.
+ *
+ * @namespace Drupal::Tests::foldershare::Unit::FolderShareCommand
+ * Unit tests for folder commands.
+ */
+
+/**
+ * Defines the schema for the custom tables used by this module.
+ *
+ * This module defines an entity, whose primary and support tables are
+ * created automatically by Drupal core's entity type management.
+ *
+ * This module creates a support table to track overall usage by counting
+ * the number of files, folders, and bytes of storage per user.
+ *
+ * @return array
+ *   An array of tables to create at module installation time to
+ *   support per-folder access controls.
+ *
+ * @see foldershare_get_user_usage_schema()
+ */
+function foldershare_schema() {
+  //
+  // The installation process automatically creates tables required for
+  // custom entity types. Here we need to define any non-entity tables.
+  //
+  // The user usage table records a list of users and how they are using
+  // files, folders, and local disk space.
+  return foldershare_get_user_usage_schema();
+}
+
+/**
+ * Returns the database schema that defines the user usage table.
+ *
+ * The table contains one record for each user. Record fields include:
+ *
+ * - The user ID.
+ * - The number of root folders they own.
+ * - The number of subfolders they own.
+ * - The number of files they own.
+ * - The total storage used by the user.
+ *
+ * This gives us a table with these columns:
+ * - uid: unsigned int.
+ * - nRootFolders: unsigned int.
+ * - nFolders: unsigned int.
+ * - nFiles: unsigned int.
+ * - size: unsigned int.
+ *
+ * @return array
+ *   An array of tables to create at module installation time to
+ *   support user usage tracking.
+ */
+function foldershare_get_user_usage_schema() {
+  $schema['foldershare_usage'] = [
+    'description' => 'Stores shared folder usage information for users.',
+
+    'fields' => [
+      // The user ID for the user.
+      'uid' => [
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+        'default'     => 0,
+        'description' => 'The user ID of the user using shared folders.',
+      ],
+
+      // The number of root folders.
+      'nRootFolders' => [
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+        'default'     => 0,
+        'description' => 'The number of top-level folders owned by the user.',
+      ],
+
+      // The number of sub-folders.
+      'nFolders' => [
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+        'default'     => 0,
+        'description' => 'The number of sub-folders owned by the user.',
+      ],
+
+      // The number of files.
+      'nFiles' => [
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+        'default'     => 0,
+        'description' => 'The number of files owned by the user.',
+      ],
+
+      // The total storage used by the user.
+      'nBytes' => [
+        'type'        => 'int',
+        'unsigned'    => TRUE,
+        'not null'    => TRUE,
+        'default'     => 0,
+        'description' => 'The amount of storage (in bytes) used by the user.',
+      ],
+    ],
+
+    // Primary Key.
+    'primary key' => [
+      'uid',
+    ],
+
+    // No additional indexes are needed beyond the primary key.
+  ];
+
+  return $schema;
+}
+
+/**
+ * Helps to uninstall this module.
+ *
+ * Drupal's module uninstall handles deletion of most things automatically.
+ * It will:
+ * - Delete search plugins using the module's entity.
+ * - Delete views using the module's entity.
+ * - Delete view modes for the module's entity.
+ * - Delete entity form display configurations for the module's entity.
+ * - Delete entity view display configurations for the module's entity.
+ * - Delete all entities.
+ * - Delete fields for the module's entity.
+ * - Delete field storage for the module's entity.
+ * - Delete all files referenced by the module's entities.
+ * - Delete all database tables defined by foldershare_schema()
+ *
+ * However, it misses a few things that are handled here:
+ * - Delete comment types associated with this module's entity.
+ * - Delete the local directory tree for this module's files.
+ */
+function foldershare_uninstall() {
+  //
+  // Drupal has several uninstall hooks and callbacks, including:
+  // - hook_module_preuninstall()
+  // - hook_uninstall()
+  // - entity type delete listener
+  // - hook_modules_uninstalled()
+  //
+  // hook_module_preuninstall() is called for all modules to give them a
+  // chance to respond when a specific module is about to be uninstalled.
+  // This is called after the uninstall process has identified the full
+  // set of modules to uninstall, but before it has done anything.
+  //
+  // hook_uninstall() is called on the specific module about to be
+  // uninstalled. The above hook has executed, but nothing else has
+  // been done.
+  //
+  // All entity type delete listeners are called after an entity type's
+  // definitions and storage have been removed.
+  //
+  // hook_modules_uninstalled() is called on all modules, except the
+  // newly uninstalled module, to notify them that the uninstalled
+  // module is entirely gone. The entity type, database tables,
+  // and configurations are all gone and all caches rebuilt to reflect
+  // the loss of the module's routes, themes, etc.
+  //
+  // Remove the directory tree
+  // -------------------------
+  // This deletes all files associated with File entities referenced
+  // by FolderShare entities. Later deletion of those entities by the
+  // File module will recognize that the underlying file is already
+  // gone.
+  $scheme = \Drupal\foldershare\Settings::getFileScheme();
+  $dir    = \Drupal\foldershare\Settings::getFileDirectory();
+  $uri    = $scheme . '://' . $dir;
+  \Drupal\foldershare\FileUtilities::rrmdir($uri);
+
+  $entityTypeManager = \Drupal::service('entity_type.manager');
+
+  $entityType = \Drupal\foldershare\Entity\FolderShare::ENTITY_TYPE_ID;
+
+  //
+  // Remove comment types
+  // --------------------
+  // The comment module *should* catch hook_modules_uninstalled() so that
+  // it can delete comment types associated with deleted entity types.
+  // But it doesn't. Instead, we need to:
+  // - Find all comment fields on FolderShare entities.
+  // - Delete those comment fields.
+  // - Find all comment types for FolderShare entities.
+  // - Delete those comment types.
+  //
+  // And this should only be done if the comment module is installed
+  // (which provides the 'comment.manager' service).
+  if (\Drupal::hasService('comment.manager') === TRUE) {
+    // Comment manager is available. Comment module is installed.
+    //
+    // Get several managers.
+    $commentManager     = \Drupal::service('comment.manager');
+    $entityFieldManager = \Drupal::service('entity_field.manager');
+
+    // Get the names of all comment fields for the FolderShare entity type.
+    // There could be none.
+    $commentFields = $commentManager->getFields($entityType);
+    $commentFieldNames = array_keys($commentFields);
+
+    // Get field storage definitions for all of fields for the
+    // FolderShare entity type.
+    $fieldStorageDefinitions = $entityFieldManager->getFieldStorageDefinitions(
+      $entityType);
+
+    // Find each comment field, get it's storage definition and delete
+    // the field.
+    foreach ($commentFieldNames as $fieldName) {
+      if (isset($fieldStorageDefinitions[$fieldName]) === TRUE) {
+        $fieldStorageDefinitions[$fieldName]->delete();
+      }
+    }
+
+    // Find all comment type entities who's target entity type is
+    // the FolderShare entity type, and delete them.
+    $commentTypeStorage = $entityTypeManager->getStorage('comment_type');
+    foreach (\Drupal::entityQuery('comment_type')->execute() as $id) {
+      $commentType = $commentTypeStorage->load($id);
+      if ($commentType->getTargetEntityTypeId() === $entityType) {
+        $commentType->delete();
+      }
+    }
+  }
+
+  //
+  // Remove orphaned permissions
+  // ---------------------------
+  // The user module *should* catch hook_modules_uninstalled() so that
+  // it can delete permissions associated with deleted entity types.
+  // But it doesn't. Instead, these permissions remain in role configurations,
+  // even though they aren't displayed and apply to an uninstalled entity
+  // type.
+  //
+  // We need to:
+  // - Get a list of permissions defined for FolderShare entities.
+  // - Get a list of user roles.
+  // - Loop through the roles and revoke the permissions.
+  if (\Drupal::hasService('user.permissions') === TRUE) {
+    // User permissions are available. User module is installed (it is
+    // a core module, so it is always installed, but let's be safe).
+    //
+    // Get all user permissions for our entity type.
+    $names = [];
+    $permissionsHandler = \Drupal::service('user.permissions');
+    foreach ($permissionsHandler->getPermissions() as $name => $permission) {
+      if ($permission['provider'] === $entityType) {
+        $names[] = $name;
+      }
+    }
+
+    // Get a list of user roles.
+    $roleStorage = $entityTypeManager->getStorage('user_role');
+    $roles = $roleStorage->loadMultiple();
+
+    // Go through each role and revoke the FolderShare entity permissions.
+    foreach ($roles as $role) {
+      foreach ($names as $name) {
+        $role->revokePermission($name);
+        $role->save();
+      }
+    }
+  }
+}

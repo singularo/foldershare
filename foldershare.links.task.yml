@@ -1,0 +1,71 @@
+#
+# Defines 'local' link tabs on entity pages, including tabs to view
+# a folder (and its contents) and adjust how a folder is displayed
+# via the field UI and the 'Manage display' UI.
+#
+
+#-----------------------------------------------------------------------
+#
+# Entity pages.
+#
+#-----------------------------------------------------------------------
+
+# View tab for entity pages.
+foldershare.view:
+  route_name: entity.foldershare.canonical
+  base_route: entity.foldershare.canonical
+  title: 'View'
+
+#-----------------------------------------------------------------------
+#
+# Module settings pages.
+#
+#-----------------------------------------------------------------------
+
+# Show module settings.
+# - Limited by route to users with site config permission.
+foldershare.settings_edit:
+  route_name: entity.foldershare.settings
+  base_route: entity.foldershare.settings
+  title: 'Settings'
+
+#-----------------------------------------------------------------------
+#
+# Root folder list pages.
+#
+#-----------------------------------------------------------------------
+
+# For authenticated users, show root folders owned by the current user.
+# For anonymous users, show root folders owned by or shared with anonymous.
+# - Limited by route to users with entity view permission.
+foldershare.rootfolders.personal:
+  route_name: entity.foldershare.personal
+  base_route: entity.foldershare.personal
+  title: 'Personal'
+  weight: 0
+
+# Show root folders shared with the current user and not owned by them.
+# - Limited by route to users with entity view permission.
+# - Limited by route to logged-in users.
+foldershare.rootfolders.shared:
+  route_name: entity.foldershare.shared
+  base_route: entity.foldershare.personal
+  title: 'Shared'
+  weight: 10
+
+# Show root folders owned by or shared with anonymous.
+# - Limited by route to users with entity view permission.
+# - Limited by route to logged-in users.
+foldershare.rootfolders.public:
+  route_name: entity.foldershare.public
+  base_route: entity.foldershare.personal
+  title: 'Public'
+  weight: 20
+
+# Show all root folders, regardless of ownership or share settings.
+# - Limited by route and page code to users with entity admin permission.
+foldershare.rootfolders.all:
+  route_name: entity.foldershare.all
+  base_route: entity.foldershare.personal
+  title: 'All'
+  weight: 30

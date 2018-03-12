@@ -1,0 +1,28 @@
+#
+# Define services provided by the module.
+#
+
+services:
+
+# Breadcrumbs.
+# - On entity pages, breadcrumbs show the root-to-entity folder path.
+  foldershare.breadcrumb:
+    class: Drupal\foldershare\Entity\Builder\FolderShareBreadcrumbBuilder
+    arguments: ['@entity.manager', '@access_manager', '@current_user']
+    tags:
+      - { name: breadcrumb_builder, priority: 701 }
+
+# FolderShare commands.
+# - Plugins define menu commands to create, delete, and change content.
+  foldershare.plugin.manager.foldersharecommand:
+    class: Drupal\foldershare\Plugin\FolderShareCommandManager
+    arguments: ['@container.namespaces', '@cache.discovery', '@module_handler']
+
+# Stream wrapper.
+# - Supports methods to manage files via PHP's stream wrappers.
+# - Handles mapping from URIs (foldershare://ID/FILENAME) to local files.
+# - Handles mapping from URIs to external URLs (http://ROUTE/ENCODED).
+  foldershare_stream:
+    class: Drupal\foldershare\Entity\FolderShareStream
+    tags:
+      - { name: stream_wrapper, scheme: foldershare }

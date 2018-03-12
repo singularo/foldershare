@@ -1,0 +1,343 @@
+<?php
+
+/**
+ * @file
+ * Implements the principal entry points and hooks for the module.
+ *
+ * @ingroup foldershare
+ */
+
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
+use Drupal\user\RoleInterface;
+
+use Drupal\foldershare\Constants;
+use Drupal\foldershare\Entity\FolderShare;
+use Drupal\foldershare\Entity\Controller\FolderShareViewController;
+
+require 'foldershare.help.inc';
+require 'foldershare.tokens.inc';
+require 'foldershare.user.inc';
+require 'foldershare.theme.inc';
+
+
+/*----------------------------------------------------------------------
+ *
+ * Define pseudo-entities.
+ *
+ * Pseudo-field handling for the field UI module's "Manage fields" and
+ * "Manage display" pages is forwarded to the FolderShareViewController
+ * class, which handles the presentation of an entity.
+ *
+ *----------------------------------------------------------------------*/
+
+/**
+ * Implements hook_entity_extra_field_info().
+ *
+ * Forward to the FolderShareViewController class.
+ */
+function foldershare_entity_extra_field_info() {
+  return FolderShareViewController::getEntityExtraFieldInfo();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ *
+ * Forward to the FolderShareViewController class.
+ */
+function foldershare_foldershare_view(
+  array &$build,
+  EntityInterface $entity,
+  EntityViewDisplayInterface $display,
+  string $viewMode) {
+
+  return FolderShareViewController::getFolderShareView(
+    $build,
+    $entity,
+    $display,
+    $viewMode);
+}
+
+/*----------------------------------------------------------------------
+ *
+ * Handle module uninstall.
+ *
+ *----------------------------------------------------------------------*/
+
+/**
+ * Implements hook_preuninstall().
+ *
+ * The module's directory tree of saved files is deleted.
+ */
+function foldershare_preuninstall($module) {
+  if ($module !== Constants::MODULE) {
+    return;
+  }
+
+  // Get the base URI for the directories containing the module's files.
+  $uri = FolderShare::getBaseFileUri();
+
+  // Remove the directories.
+  file_unmanaged_delete_recursive($uri);
+}
+
+/*----------------------------------------------------------------------
+ *
+ * Handle private file downloads.
+ *
+ *----------------------------------------------------------------------*/
+
+/**
+ * Implements hook_file_download().
+ */
+function foldershare_file_download($uri) {
+  // Map URI to File
+  // ---------------
+  // Find the File object associated with the URI.
+  $files = \Drupal::entityTypeManager()
+    ->getStorage('file')
+    ->loadByProperties(['uri' => $uri]);
+
+  if (count($files) === 0) {
+    // No file found.
+    return NULL;
+  }
+
+  // Some database servers may use a case-insensitive comparison, so the
+  // query may have found multiple matches. Find the correct one, if any.
+  foreach ($files as $item) {
+    if ($item->getFileUri() === $uri) {
+      $file = $item;
+      break;
+    }
+  }
+
+  if (isset($file) === FALSE) {
+    // No file found.
+    return NULL;
+  }
+
+  //
+  // Map File to FolderShare entity
+  // ------------------------------
+  // Look for the FolderShare entity that wraps this file.
+  $parentId = FolderShare::getFileParentFolderId($file);
+  if ($parentId === -1) {
+    // Not a file under FolderShare management.
+    return NULL;
+  }
+
+  $parentFolder = FolderShare::load($parentId);
+  if ($parentFolder === NULL) {
+    // Something has become corrupted!
+    return NULL;
+  }
+
+  //
+  // Check permission
+  // ----------------
+  // Check for view access to the FolderShare entity that manages
+  // this file.
+  if ($parentFolder->access('view') === FALSE) {
+    // Access denied.
+    return -1;
+  }
+
+  // Otherwise OK. Let other modules provide headers.
+  return NULL;
+}
+
+/*----------------------------------------------------------------------
+ *
+ * Handle comment indexing on files and folders.
+ *
+ *----------------------------------------------------------------------*/
+
+/**
+ * Implements hook_foldershare_update_index().
+ */
+function comment_foldershare_update_index(EntityInterface $item) {
+  // This function is closely modeled after comment_node_update_index() in
+  // the Drupal core Comment module. That function applies only to node
+  // entities, while this function applies to FolderShare entities.
+  //
+  if (\Drupal::hasService('comment.manager') === FALSE) {
+    // While this hook should only be called when the comment module is
+    // installed, and when it is installed there should be a comment
+    // manager, let us be extra sure and do nothing if the service
+    // is absent.
+    return '';
+  }
+
+  $indexComments = &drupal_static(__FUNCTION__);
+
+  // Determine if comments should be included in the search index. It would
+  // be inappropriate to include them if general users cannot view comments.
+  if ($indexComments === NULL) {
+    // Do not index in the following three cases:
+    //
+    // 1. 'Authenticated user' can search content but can't access comments.
+    //
+    // 2. 'Anonymous user' can search content but can't access comments.
+    //
+    // 3. Any role can search content but can't access comments and access
+    //    comments is not granted by the 'authenticated user' role. In this
+    //    case all users might have both permissions from various roles but
+    //    it is also possible to set up a user to have only search content
+    //    and so a user edit could change the security situation so it is
+    //    not safe to index the comments.
+    $indexComments = TRUE;
+
+    // Get the current roles.
+    $roles = \Drupal::entityManager()->getStorage('user_role')->loadMultiple();
+
+    // Can authenticated users access comments?
+    $authCanAccess = $roles[RoleInterface::AUTHENTICATED_ID]->hasPermission('access comments');
+
+    // Loop through all of the roles.
+    foreach ($roles as $rid => $role) {
+      if ($role->hasPermission('search content') === TRUE &&
+          $role->hasPermission('access comments') === FALSE) {
+        // The role supports searching, but not comments.
+        if ($rid === RoleInterface::AUTHENTICATED_ID ||
+            $rid === RoleInterface::ANONYMOUS_ID ||
+            $authCanAccess === FALSE) {
+          // The role is either for authenticated users or anonymous users,
+          // and they cannot access comments. Do not include them in the
+          // search index.
+          $indexComments = FALSE;
+          break;
+        }
+      }
+    }
+  }
+
+  if ($indexComments === FALSE) {
+    // Do not include comments. Return nothing.
+    return '';
+  }
+
+  // Do include comments in the search index.
+  //
+  // Loop through all the comment fields for our entity type.
+  $mgr     = \Drupal::service('comment.manager');
+  $builder = \Drupal::entityManager()->getViewBuilder('comment');
+  $storage = \Drupal::entityManager()->getStorage('comment');
+  $fields  = $mgr->getFields(FolderShare::ENTITY_TYPE_ID);
+  $build   = [];
+
+  foreach ($fields as $fieldName => $info) {
+    // Skip fields that the entity does not have.
+    if ($item->hasField($fieldName) === FALSE) {
+      continue;
+    }
+
+    // Get the definition and characteristics.
+    $def     = $item->getFieldDefinition($fieldName);
+    $mode    = $def->getSetting('default_mode');
+    $perPage = $def->getSetting('per_page');
+
+    // If the field is visible, get the field's comment, build a
+    // view of it, and append it to the build we'll be returning.
+    if ($item->get($fieldName)->status === TRUE) {
+      $comments = $storage->loadThread($item, $fieldName, $mode, $perPage);
+      if ($comments !== NULL) {
+        $build[] = $builder->viewMultiple($comments);
+      }
+    }
+  }
+
+  // Render and return the comments.
+  return \Drupal::service('renderer')->renderPlain($build);
+}
+
+/**
+ * Implements hook_views_data_alter().
+ *
+ * The module's views data is primarily handled by the FolderShareViewsData
+ * class, which describes the relevant fields and relationships for the
+ * FolderShare entity.  Unfortunately, some modules add further views data
+ * for the FolderShare entity. Since these additions are made after FolderShare
+ * adds its views data, we cannot adjust those additions until later in
+ * this hook.
+ *
+ * We cannot anticipate every module that might modify the FolderShare views
+ * data. But we can correct problems introduced by core modules, such as
+ * the Comment and Views modules.
+ *
+ * @see \Drupal\foldershare\Entity\FolderShareViewsData
+ */
+function foldershare_views_data_alter(&$data) {
+
+  // Hooks are called after all entity types have added their views data.
+  // But if somehow this module's entity type has not yet done this, quit now.
+  $baseTable = FolderShare::BASE_TABLE;
+  if (isset($data[$baseTable]) === FALSE) {
+    return;
+  }
+
+  //
+  // Comment module additions
+  // ------------------------
+  // The Comment module adds several of its own fields to entities that
+  // have comment fields:
+  //
+  // - 'comments_link' - a field that creates an 'Add comment' link.
+  //
+  // - 'uid_touch' - a filter that restricts content to items owned by
+  //   a user or posted to by a user.
+  //
+  // - FIELDNAME . '_cid' - a relationship that connects the entity to
+  //   its posted comments. FIELDNAME is the name of the comment field.
+  //
+  // If the Comment module is installed, there will be a comment manager
+  // service. And if a comment field has been added to the FolderShare entity,
+  // that comment field will be listed by the comment manager.
+  //
+  if (\Drupal::hasService('comment.manager') === TRUE) {
+    $commentManager = \Drupal::service('comment.manager');
+    $commentFields = $commentManager->getFields(FolderShare::ENTITY_TYPE_ID);
+
+    if (empty($commentFields) === FALSE) {
+      // Link to add a comment.
+      if (isset($data[$baseTable]['comments_link']) === TRUE) {
+        // Fix the convoluted grammar.
+        $data[$baseTable]['comments_link']['field']['help'] =
+          t('Display a link to add a comment to the item. The link is only shown for users that have permission to add comments.');
+      }
+
+      // Filter to show items with recent posts by a user.
+      if (isset($data[$baseTable]['uid_touch']) === TRUE) {
+        // Fix the convoluted grammar, and refer to our entity type
+        // instead of 'node'.
+        $data[$baseTable]['uid_touch']['help'] =
+          t('Filter items to only show items the user has created or commented upon.');
+      }
+
+      // Relationship for comments on the item.
+      foreach ($commentFields as $fieldName => $field) {
+        if (isset($data[$baseTable][$fieldName . '_cid']) === TRUE) {
+          // Delete this badly considered relationship. Even the Comment
+          // module says this in the relationship's description:
+          //
+          // 'This will create 1 duplicate record for every comment.
+          // Usually if you need this it is better to create a comment view'.
+          unset($data[$baseTable][$fieldName . '_cid']);
+        }
+      }
+    }
+  }
+
+  //
+  // Views module additions
+  // ----------------------
+  // The Views module automatically adds a generic 'Bulk update' field that
+  // adds checkboxes to the rows and adds a form to the top that lists all
+  // actions that may be applied to the rows. However, we do not define
+  // actions and this is a terrible user interface.
+  //
+  // Delete this.
+  if (isset($data[$baseTable][FolderShare::ENTITY_TYPE_ID . '_bulk_form']) === TRUE) {
+    unset($data[$baseTable][FolderShare::ENTITY_TYPE_ID . '_bulk_form']);
+  }
+}

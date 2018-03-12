@@ -1,0 +1,231 @@
+#
+# Defines routes to module pages.
+#
+# Module pages include pages that show specific entities (e.g. files
+# and folders), module settings, and administrator forms.
+#
+
+#-----------------------------------------------------------------------
+#
+# Reports pages.
+#
+#-----------------------------------------------------------------------
+
+# Module usage.
+# - A table lists all site users and the number of root folders, folders,
+#   and files owned by each one, and the storage used.
+foldershare.reports.usage:
+  path: '/admin/reports/foldershare'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\AdminUsagePage::page'
+    _title: 'FolderShare usage'
+  requirements:
+    _permission: 'administer foldershare'
+
+#-----------------------------------------------------------------------
+#
+# Module settings.
+#
+#-----------------------------------------------------------------------
+
+# Module settings.
+# - Tabs on the page link to the Field UI's form, field, and display
+#   management forms.
+# - Vertical tabs show multiple settings panes to adjust how files
+#   are stored, folders are presented, etc.
+entity.foldershare.settings:
+  path: '/admin/structure/foldershare'
+  defaults:
+    _form: '\Drupal\foldershare\Form\AdminSettings'
+    _title: 'FolderShare'
+  requirements:
+    _permission: 'admin+administer site configuration'
+  options:
+    _admin_route: TRUE
+
+#-----------------------------------------------------------------------
+#
+# Top folder lists
+#
+# These routes present pages that list top-level folders.
+#
+#-----------------------------------------------------------------------
+# Show root folders owned by or shared with the current user, including
+# if the current user is anonymous.
+# - Access denied if the user doesn't have "view foldershare" permission.
+entity.foldershare.personal:
+  path: '/foldershare'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\ListPage::personalPage'
+    _title: 'Folders'
+  requirements:
+    _permission: 'view foldershare'
+#   Access control is checked in the ListPage class.
+    _access: 'TRUE'
+
+# Show root folders owned by or shared with anonymous.
+# - Access denied if the user doesn't have "view foldershare" permission.
+entity.foldershare.public:
+  path: '/foldershare/public'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\ListPage::publicPage'
+    _title: 'Folders'
+  requirements:
+    _permission: 'view foldershare'
+    _user_is_logged_in: 'TRUE'
+#   Access control is checked in the ListPage class.
+    _access: 'TRUE'
+
+# Show root folders shared with the current user.
+# - Access denied if the user doesn't have "view foldershare" permission.
+# - Access denied if sharing is disabled for the site.
+entity.foldershare.shared:
+  path: '/foldershare/shared'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\ListPage::sharedPage'
+    _title: 'Folders'
+  requirements:
+    _permission: 'view foldershare'
+    _user_is_logged_in: 'TRUE'
+#   Access control is checked in the ListPage class.
+    _access: 'TRUE'
+
+# Show all root folders, regardless of ownership or share settings.
+# - Access denied if the user doesn't have "administer foldershare" permission.
+entity.foldershare.all:
+  path: '/foldershare/all'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\ListPage::allPage'
+    _title: 'Folders'
+  requirements:
+    _permission: 'administer foldershare'
+#   Access control is checked in the ListPage class.
+    _access: 'TRUE'
+
+#-----------------------------------------------------------------------
+#
+# User interface forms.
+#
+# These pages present forms to edit content.
+#
+#-----------------------------------------------------------------------
+
+# Edit entity fields.
+# - The edit form shows all entity public fields for editing.
+# - A required URL component gives the entity ID for the entity to edit.
+entity.foldershare.edit:
+  path: '/foldershare/{foldershare}/edit'
+  defaults:
+    _entity_form: foldershare.edit
+    _title: 'Edit'
+  requirements:
+    _entity_access: 'foldershare.update'
+    foldershare: \d+
+  options:
+    parameters:
+      foldershare:
+        type: entity:foldershare
+
+# FolderShare command plugin hosting form.
+# - The form is used internally to host the form components of a command.
+# - A required argument is a JSON and Base64 encoded structure with the
+#   command's ID and configuration.
+entity.foldersharecommand.plugin:
+  path: '/foldershare/command/{encoded}'
+  defaults:
+    _form: '\Drupal\foldershare\Form\EditCommand'
+  requirements:
+    _permission: 'admin+administer site configuration+administer foldershare+share foldershare+author foldershare+view foldershare'
+  options:
+    parameters:
+      encoded:
+        type: string
+
+#-----------------------------------------------------------------------
+#
+# Entity pages.
+#
+# These pages present entities, including their fields and folder contents.
+#
+#-----------------------------------------------------------------------
+# Entity fields.
+# - The page shows the entity's name as the page title, followed by entity
+#   fields and and an embedded view to show folder contents.
+# - A required URL component gives the entity ID for the entity to view.
+entity.foldershare.canonical:
+  path: '/foldershare/{foldershare}'
+  defaults:
+    _controller: '\Drupal\foldershare\Entity\Controller\FolderShareViewController::view'
+    _title_callback: '\Drupal\foldershare\Entity\Controller\FolderShareViewController::title'
+  requirements:
+    foldershare: \d+
+    _entity_access: 'foldershare.view'
+  options:
+    parameters:
+      foldershare:
+        type: entity:foldershare
+
+#-----------------------------------------------------------------------
+#
+# File downloads.
+#
+# These pages assist in downloading files.
+#
+#-----------------------------------------------------------------------
+# Send file with MIME type.
+# - The required argument is the entity ID of a File entity that is wrapped
+#   by a FolderShare entity.
+entity.foldershare.file:
+  path: '/foldershare/showfile/{file}'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\FileDownload::show'
+  options:
+    parameters:
+      file:
+        type: entity:file
+  requirements:
+    file: \d+
+    _permission: 'admin+administer foldershare+author foldershare+view foldershare'
+
+# Download file as attachment.
+# - The required argument is the entity ID of a File entity that is wrapped
+#   by a FolderShare entity.
+entity.foldershare.file.download:
+  path: '/foldershare/downloadfile/{file}'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\FileDownload::download'
+  options:
+    parameters:
+      file:
+        type: entity:file
+  requirements:
+    file: \d+
+    _permission: 'admin+administer foldershare+author foldershare+view foldershare'
+
+# Download FolderShare entity as attachment.
+# - The required argument is an array of FolderShare entity IDs, expressed as
+#   JSON then base-64 encoded.
+entity.foldershare.download:
+  path: '/foldershare/download/{encoded}'
+  defaults:
+    _controller: '\Drupal\foldershare\Controller\FolderShareDownload::download'
+  options:
+    parameters:
+      encoded:
+        type: string
+  requirements:
+    _permission: 'admin+administer foldershare+author foldershare+view foldershare'
+
+#-----------------------------------------------------------------------
+#
+# File uploads.
+#
+# These pages assist in uploading files.
+#
+#-----------------------------------------------------------------------
+entity.foldershare.upload:
+  path: '/foldershare/upload'
+  defaults:
+    _form: '\Drupal\foldershare\Form\FileUpload'
+  requirements:
+    _permission: 'admin+administer foldershare+author foldershare'

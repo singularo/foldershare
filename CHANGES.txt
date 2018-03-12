@@ -1,0 +1,614 @@
+/**
+@page Change Change log
+
+@par 4/19/2017, Version 0.1.0
+First internal release
+
+
+@par 4/20/2017, Version 0.1.1
+Internal testing release.
+
+Bugs fixed:
+- Personal projects tab visible to anonymous.
+- Project rename allows multiple projects with same name.
+- Rename allows files and folders with illegal characters.
+- Rename project grayed out on command menu.
+- Rename dialog doesn't support enter & escape keys.
+- Duplicate does not work for files, folders, and projects.
+- Delete does not work for files, folders, and projects.
+- Showing additional fields on folder table view mode crashes page.
+- Enabling UUID on folder page crashes page.
+- Settings form permissions link does not go to module's permissions group.
+- Settings form does not link to field_ui permissions for module.
+- Settings form has typos in explanation text.
+- Settings form needs separate links for text formats & text editors.
+- Delete-all form has typos in explanation text.
+- Share form needs folder and project name in page title.
+- Share form needs better explanation text.
+- File and folder icons are too similar at small size.
+- File and folder rows are too narrow.
+- Yellow selection color doesn't show up well.
+- Selected rows don't stay showing as selected in Bartik theme.
+
+
+@par 4/24/2017, Version 0.1.2
+Internal testing release.
+
+Bugs fixed:
+- Description field needs to support text formats & editor.
+
+Enhancements:
+- Share form redesigned for "view" and "author" columns.
+- Share form lists all users, not just anonymous.
+
+Internal changes:
+- Unused "entity_type" column in access control table removed.
+- Share permissions changed from "read" and "write" to "view" and "author".
+- Share access controls insure view/author mutually exclusive.
+
+
+@par 5/2/2017, Version 0.1.3
+Internal testing and demonstration release.
+
+Bugs fixed:
+- Showing additional fields on folder view mode crashes page.
+- Showing comment fields on folder view mode crashes page.
+- Adding fields gets missing "text_format" plugin error.
+
+Enhancements:
+- "Edit description" command changed to "Edit".
+- "Edit" form shows all fields, including those added by site admin.
+
+Internal changes:
+- Removed unused translation flags on folder fields.
+- Common constants moved to "Constants" class.
+- Module settings moved to "Settings" class.
+- CSS classes parameterized by common constant for module name.
+- Module name use reduced in all text and names.
+- Settings form tabs broken out into separate functions.
+
+
+@par 7/26/2017, Version 0.2.0
+Extensive changes to simplify the access control model, use the "views"
+module for root folder and folder contents lists, support search, support
+comments, support added fields to files and folders, and make the code pass
+most of the style guidelines for Drupal, Pear, PHPCS, PSR2, and ZEND.
+
+Bugs fixed:
+- Settings form "File extensions" tab renamed to "File restrictions".
+- Sharing form requires "share" access, not "update".
+
+Enhancements:
+- Upgraded "folder_path" pseudo-field:
+  - Uses links instead of original unlinked text.
+  - Shows parent list as link to view.
+  - Shows parent list view's title as test of link.
+  - Moved path building into a utility function (also used by get info).
+- Upgraded bread crumb builder:
+  - Shows parent list as link to view.
+  - Shows parent list view's title as test of link.
+
+Internal changes:
+- Renamed module from "dfs" to "fs"
+- Renamed module from "dfs" to "foldershare"
+- Coding structure:
+  - Consolidated module setting get/set into a settings class.
+  - Consolidated utility functions into a utilities class.
+  - Minimized use of module name everywhere by using a central constant string.
+- Data model:
+  - Revised "Folder" entity type to "FolderShare" entity type to make
+    views work.
+  - Describes both folders and files in the same type so that views can
+    show a list of a single entity type. No union of entity types required.
+  - Encorporates access grants directly in entity type, instead of in a
+    separate access table, so that views can see all relevant fields at once.
+    No join of tables required.
+  - Support site admin-added fields.
+  - Support site admin-added comments.
+  - Provide methods to query all content owned by a user.
+  - Provide methods to delete all content owned by a user.
+  - Provide methods to unshare all content owned by or shared with a user.
+  - Rename 'parent_id' and 'root_id' fields to avoid naming style conflict.
+  - Added access grant fields and API calls that manage them.
+  - Added 'kind' field to indicate file, folder, or rootfolder.
+  - Updated queries to use kind field instead of more complex queries.
+  - Added 'mime' field to have file or folder's MIME type.
+  - Added account cancel and delete hooks implemented to clean up access grants
+    and usage tracking when accounts are blocked or go away.
+  - Added account cancel styles supported to delete all content, unshare it,
+    or move it to owned by anonymous.
+- Access control:
+  - Removed folder sharing styles 'folder' and 'hierarchy' from access
+    control, settings, & help.
+  - Separate "fs_access" control table deleted and functionality merged
+    into UID list fields on folder.
+  - Access grant functions removed from access controller.
+  - Sharing form updated to use new access grant functions.
+  - Added "share" permission to govern control over sharing and creation
+    of root folders.
+- Usage tracking:
+  - Added usage tracking table (created at install time).
+  - Added usage report page updated to show table on usage for all users.
+  - Created a separate usage table with entries per user.
+  - Updated all API calls to update the usage table during processing.
+- Views:
+  - Added bulk content view for administrators. Form includes list of actions
+    to perform on selection. No Javascript used.
+  - Added root folder list views for administrators and users (personal and
+    public views). Form includes list of commands to perform on selection,
+    plus an optional Javascript UI.
+  - Added folder contents list view for users, embedded onto entity view
+    pages. Form includes list of commands to perform on selection, plus an
+    optional Javascript UI.
+  - Defined views data for entity to describe all relevant fields and add
+    relationships that allow fields to be used in views.
+  - Created views-based UI that supports non-scripted browsers.
+  - Created views-based UI that supports scripted browsers and builds a
+    nicer pull-down menu and browser-side validity checking.
+  - Added file upload support within views UI.
+  - Marked table columns as low/medium/high priority for mobile responsiveness.
+- Field formatters:
+  - Added field formatters to add MIME type-based icons as stand-alone
+    field presentations, or as a prefix on string fields (such as the item's
+    name), and linkable to the entity. Dovetails with existing File module
+    and theme standards for MIME type icons.
+- Search:
+  - Search plugin created to extract keywords from entity fields.
+  - Adjustments made to entity view builders to support search keyword
+    and search page view modes that present content differently for each.
+- Settings:
+  - Added admin setting to set terminology for file, folder, and root folder.
+  - Added admin settings to reset views.
+  - Added admin links to other admin pages and usage report page.
+  - Removed setting for page limit for lists (now handled by views).
+- Admin forms:
+  - Added admin forms to delete all, delete all for user, unshare all,
+    unshare all for user, unshare all with user.
+  - Added front admin form page, with other pages as tabs.
+- Display modes:
+  - Removed old folder table view and display mode.
+  - Removed old "full" page view and display mode.
+  - Added "default" page view and display mode with reasonable defaults.
+- Styling:
+  - Simplified styling by removing old custom table and UI styles.
+  - Styled views tables with minimal default.
+  - Styled pages with minimal default.
+  - Styled admin pages with spacing, icons, footers, etc.
+- Commands:
+  - Renamed "FolderCommand" plugin to "FolderShareCommand".
+  - Extensive redesign and rewrite of plugin command structure.
+  - Folder commands created for major folder operations.
+  - Extensive annotation scheme to help automate command validation in PHP
+    and in client-side Javascript.
+- Coding standards:
+  - Extensively updated code to meet most Drupal coding standards and
+    best practices.
+  - Extensively updated code to meet (where possible) Pear, PHPCS,
+    PSR2, and ZEND coding standards along with Drupal's. This provides
+    extra checking for common coding problems.
+- Documentation:
+  - Doxygen config parameterized with module name & version.
+  - Adjusted all documentation to use Drupal tag subset and formatting.
+- Cleanup:
+  - Removed old routes, task links, libraries, CSS, JS, and classes from
+    prior design that did not use views.
+
+
+@par 7/28/2017, Version 0.2.1
+Internal testing and demonstration release.
+
+Bugs fixed:
+  - FolderShareSearch SQL query corrected to use proper table alias.
+  - FolderShareViewBuilder corrected to exclude pseudo-fields from search
+    indexes and results (pseudo-fields are used for a folder path and the
+    folder contents table).
+  - Related links on settings page no longer show as raw HTML.
+  - Reset button for allowed file extensions works again.
+  - Setting sharing works again.
+  - Fixed unshareAll, which failed to save cleared share grants.
+  - Fixed access control check crash on 'delete' of owned/shared item.
+  - Admin page linked to UnshareByUser when it meant UnshareWithUser.
+
+Commands:
+  - FolderShareCommandBase and commands upgraded to handle multiple execute
+    messages, and a type (status, warn, error) for each one.
+  - FolderShareViewUI upgraded to report execute messages with the proper
+    message types.
+
+Sharing:
+  - The sharing form now lists the admin user, along with other users, but
+    with access grants disabled since admins always have full access.
+  - The sharing form now lists the folder owner, along with other users, but
+    with access grants disabled since owners always have full access.
+
+Admin forms:
+  - Use of any admin form now completes by sending the user to the main admin
+    form page.
+
+File upload:
+  - Added support to the file upload field to limit uploads to files with
+    approved extensions, as set for the module. Changes made to both the view UI
+    and the upload command form (when there is no Javascript in the browser).
+
+
+@par 8/1/2017, Version 0.2.2
+Internal testing and demonstration release.
+
+Bugs fixed:
+  - Module help:
+    - Fixed bug where help page responded with [] instead of NULL if the
+      help route was not one the module should respond to.
+    - Fixed bug where help page responded to the wrong route.
+
+FolderShare entity:
+  - Updated base field definitions to default to the 'foldershare_storage_size'
+    field formatter for storage sizes (previously used the old name
+    'storage_size').
+  - Updated base field definitions to default to the
+    'foldershare_file_reference_download' field formatter for file fields
+    (previously used default file link).
+
+Field formatters:
+  - Storage size:
+    - Changed the ID from 'storage_size' to 'foldershare_storage_size'. Since
+      field formatter names are global, it is important to prefix with the
+      module name.
+    - Changed the class name from 'StorageSize' to 'FolderStorageSize' to keep
+      the class name similar to the plugin ID name.
+    - Constrained the formatter to the 'size' field on FolderShare
+      entities so that the formatter doesn't show up for any integer field.
+    - Adjusted the label text to name the FolderShare module and explain a
+      little more what the formatter does.
+  - Base class (string):
+    - Changed the class name from 'FolderShareFormatterBase' to
+      'FolderShareStringFormatterBase' to reflect that it is a base class only
+      for string field formatters.
+  - Base class (FolderShare reference):
+    - Created new class for formatting references to FolderShare entities.
+  - Base class (File reference):
+    - Created new class for formatting references to File entities pointed to
+      by FolderShare entities.
+  - MIME icon (string):
+    - Changed the ID from 'foldershare_mimeicon' to
+      'foldershare_string_mimeicon' to reflect that it operates upon
+      strings, not entity references.
+    - Changed the class name from 'FolderShareMIMEIcon' to
+      'FolderShareStringMIMEIcon' to keep the class name similar to the
+      plugin ID name.
+    - Adjusted the label text to name the FolderShare module.
+  - Default (string):
+    - Changed the ID from 'foldershare_default' to 'foldershare_string_default'
+      to reflect that it operates upon strings, not entity references.
+    - Changed the class name from 'FolderShareDefault' to
+      'FolderShareStringDefault' to keep the class name similar to the plugin
+      ID name.
+    - Adjusted the label text to name the FolderShare module.
+  - Default (FolderShare reference):
+    - Created new class for formatting references to FolderShare entities, such
+      as for the 'parentid' and 'rootid' fields, or any eneity reference to a
+      FolderShare entity on any other entity type.
+  - File download:
+    - Created new class for formatting references to File entities from
+      FolderShare entities (e.g. the 'file' field).
+
+Views:
+  - Updated all views to use the 'foldershare_storage_size' field formatter
+    for storage sizes (previously used the old name 'storage_size').
+      
+Display modes:
+  - Updated all display modes to use the 'foldershare_storage_size' field
+    formatter for storage sizes (previously used the old name 'storage_size').
+  - Updated all display modes to use the 'foldershare_file_reference_download'
+    field formatter for file fields (previously used default file link).
+
+
+@par 8/4/2017, Version 0.2.3
+Internal testing and demonstration release.
+
+Field formatters:
+  - FileReferencePresent (file):
+    - Created a 1st draft file field formatter that shows images as images,
+      and adds a file name link below the image. Does not support image
+      styles.
+
+User interface:
+  - Updated the view UI Javascript to add table row selection so that a click
+    anywhere on a row adds/removes the row from the current selection by
+    auto-clicking the row's checkbox.
+  - Updated the view UI Javascript to hide the column of row checkboxes when
+    scripting is available in the browser.
+  - Updated the view UI Javascript to restore row selection highlighting if
+    a page is reloaded and rows are still selected.
+
+
+@par 10/3/2017, Version 0.3.0
+Internal testing and demonstration release.
+
+Bugs fixed:
+  - Module settings:
+    - Fixed module settings view configuration reset buttons to properly
+      reset the configurations, or report an error if they fail.
+  - Commands and menus:
+    - Fixed copy/move to root menu item visibility that failed hide the
+      menu item when user permissions and the selection were invalid.
+    - Fixed command validation to abort validation on the first error,
+      thereby avoiding repeated validation errors.
+    - Fixed rename command to exclude the current folder when searching
+      for colliding names so that a rename to the same name is accepted.
+    - Updated view UI Javascript to use the Drupal behaviors mechanism
+      so that scripts would be invoked on page ready AND AJAX inserts.
+    - Updated view UI Javascript to use AJAX-provided page context to
+      limit selector scope, and use jQuery "once" when marking found
+      items during an initial attach.
+    - Updated server-side menu generation for jQuery menu to mark the
+      menu initially as hidden so that it doesn't flash briefly onto
+      page when the page is first loaded.
+  - FolderShare entity:
+    - Fixed duplication crash that had a typo in a variable name when
+      checking for valid access to the folder tree.
+    - Corrected multiple ID listing methods to cast IDs from a database
+      query from stringsto integers before returning them so that further
+      integer comparisons on IDs will work correctly.
+    - Fixed file copy to update the public name of a new File object to use
+      the same collission-free name created for the FolderShare wrapper.
+    - Fixed entity copy to duplicate the entire entity, including any fields
+      or comments, instead of creating a new sparse copy without these.
+  - FolderShare view controller:
+    - Fixed path pseudo-field to honor the field's weight from the "Manage
+      display" field_ui configuration.
+    - Fixed path pseudo-field to remove the unnecessary last item in the
+      path, which is for the current file/folder.
+  - Text sanitation throughout:
+    - Fixed FolderShareReferenceFormatterBase used to format entity references
+      on folder pages.
+    - Fixed FolderShareStringFormatterBase used to format entity names in
+      a view.
+    - Fixed FolderShareBreadcrumbBuilder used to create folder page breadcrumbs.
+    - Fixed Utilities used to create folder paths in GetInfo and on folder
+      pages.
+    - Fixed FolderShareViewController used to create titles on folder pages.
+
+Module configuration:
+  - Updated libraries YML to add jquery and drupalSettings as dependencies
+    for view UI Javascript.
+  - Removed settings API and values for old terms for file, files, folder,
+    folders, root folder, and root folders. Updated YML install files.
+  - Removed old terminology tokens and token group.
+  - Removed the YML files for the old views.
+  - Removed the YML files for the old actions.
+  - Added YML files for comment types and fields.
+  - Added settings API and initial configuration to select command plugins
+    to show in the command menu.
+
+Admin pages:
+  - Removed admin bulk content view and view field plugin, favoring instead
+    use of the "All" root folder list tab for admin actions.
+  - Changed route for usage page to /admin/reports under "Reports" menu.
+  - Remove admin forms (e.g. delete all, unshare all).
+
+Data model:
+  - Added ZIP archive and unarchive entity operations.
+  - Added API call to compress a set of folder children to a ZIP archive.
+  - Added API call to uncompress a ZIP archive into the current folder.
+  - Created FileUtilities class to contain functions dealing with files and
+    cover up issues with Drupal's FileSystem service.
+
+Search:
+  - Added support for search indexing and search results hooks similar to
+    those for 'node'.
+  - Added support for indexing comments on FolderShare entities.
+
+User interface:
+  - Text in UI:
+    - Removed all "root folder" term use throughout the user-visible UI, such
+      as in menu names, field descriptions, and error messages.
+    - Removed all use of settings API to fill in terms in user-visible UI text.
+  - Commands and menus:
+    - Removed "Get Info" command and its menu and page as providing redundant
+      information already found in views, folder pages, and the share command.
+    - Updated view UI server code to pass AJAX settings to the Javascript as
+      DrupalSettings.
+    - Added "Download" command for a file download via an HTTP attach.
+    - Added "Compress" command to compress a selection to a ZIP archive.
+    - Added "Uncompress" command to uncompress a ZIP archive.
+    - Added "Copy" command to copy files and folders.
+    - Added "Move" command to move files and filders.
+    - Removed old "Copy to root" command.
+    - Removed old "Move to root" command.
+    - Added (then removed from release) "Delete all by user" command.
+    - Added (then removed from release) "Unshare all by user" command.
+    - Added (then removed from release) "Unshare all with user" command.
+  - Module help page:
+    - Removed section discussing old terminology.
+  - Module settings page:
+    - Regrouped items on tabs and tab panes for better topical organization.
+    - Adjusted file name extensions UI to hide extensions field and reset
+      button when extensions checkbox is off.
+    - Added search configuration reset button.
+    - Added entity form configuration reset button.
+    - Added entity display configuration reset button.
+    - Added maximum file upload size field.
+    - Added maximum number of files per upload field.
+    - Added checkbox to enable/disable sharing site-wide.
+    - Added checkbox to enable/disable anonymous sharing.
+    - Removed file, files, folder, folders, root folder, and root folders
+      term prompts.
+    - Added help intro text above vertical tabs.
+    - Removed page and settings section icons and adjusted layout.
+    - Simplified all text descriptions.
+    - Removed reset buttons for old multiple views, reducing it to a
+      single button for the single view used for all file and folder lists.
+    - Added reset button to restore the original search configuration.
+    - Added reset buttons to restore the original form and display
+      configurations.
+    - Added the interface tab to select which command plugins to include
+      in the command menu.
+    - Removed link to old 'Delete all' form and instead link to Drupal core
+      system form for deleting all (same one as on module uninstall).
+    - Replaced link to old admin pages (which have been removed) to link to
+      the usage report.
+  - Listings:
+    - Removed all old view pages (list personal, list public, list all)
+      in favor of new pages with embedded views.
+    - Created new "FolderShare Lists" view that includes displays for embedded
+      views for Personal, Public, All, and Folder contents.
+    - Created list page controller to embed a view in a page, preceeded by
+      an "enhanced user interface" form.
+    - Reduced view field plugin to create a "base user interface" that does
+      not require Javascript. This UI presents a command menu and Apply button,
+      and supports additional pages to prompt for command parameters.
+    - Created "enhanced user interface" form that is embedded on a list page,
+      and on an entity view page just before an embedded view of folders.
+      The enhanced UI uses Javascript to create a nicer menu, buttons, etc.
+      Optionally it supports AJAX (not working yet).
+  - Help:
+    - Removed the module icon and adjusted layout.
+    - Updated help text.
+
+Styling:
+  - Adjusted CSS to reduce width of vertical tabs on module settings.
+  - Adjusted CSS to change indentation and placement of descriptions and
+    fields, and vary that indentation based upon @media screen size for
+    module settings.
+  - Updated all module settings tabs icons to better match tab topics.
+  - Removed override of row padding, reverting back to the slightly larger
+    default in Drupal core's table.css.
+  - Styled folder contents table with border and toolbar to look more
+    like a Finder/Explorer window.
+  - Styled command forms to be vaguely dialog-like in order to have
+    structure and keep widgets together, despite what some themes do.
+  - Moved command menu to the left side of the contents table toolbar.
+  - Adjusted JS and CSS to address issues with quirks of top 15+
+    Drupal themes, and particlarly for bootstrap-based themes.
+  - Removed old dialog, settings tab, and module logo images from the
+    images directory. These are no longer used.
+
+Miscellaneous:
+  - Reorganized directory tree to group entity-related items under the
+    'Entity' directory (including controllers, builders, exceptions, and
+    the data model classes). Similarly, grouped page generators into a
+    'Controller' directory, and forms into a 'Form' directory.
+  - Created FileUtilities class to wrap PHP and Drupal FileSystem functions
+    and contain other internal file and directory utility functions, some of
+    which are moved from FolderShare.
+  - Created "foldershare.api.php" to document the principal supported
+    API hooks.
+
+
+@par 10/5/2017, Version 0.3.1
+Bug fix internal release.
+
+Bugs fixed:
+  - Fixed failing installs due to views data referring to "comment.manager"
+    service Comment module, though Comment was not installed.
+  - Fixed authenticated user command menu's missing commands due to improper
+    determination of "create" access.
+  - Fixed uncompress failing due to typo causing illegal math operation on
+    string.
+  - Fixed uncompress failing on a deep ZIP archive due to directory path
+    concatenation being wrong, leaving uncompressed files unable to find the
+    directory into which to uncompress.
+  - Fixed command status/error messages to properly sanitize file names within
+    error messages so that special characters are shown properly.
+  - Fixed file reference formatters to properly sanitize file names so that
+    special characters are shown properly.
+  - Fixed file extensions reset on admin settings form, which failed to
+    fill in the newly reset values on the form even though it actually
+    did the reset.
+
+Miscellaneous:
+  - Added uninstall handler to delete the directory tree on uninstall.
+  - Added uninstall handler to delete comment types on uninstall.
+  - Added uninstall handler to delete orphaned permissions on uninstall.
+  - Compress generates an error to the user if .zip extension is not allowed
+    by the site.
+  - Uncompress checks ZIP archive contents first and generates an error if
+    any file in the archive requires an extension not allowed by the site.
+  - Uncompress extracts archives with a single top-level item (a file or
+    folder) into the current folder, but otherwise extracts them into a
+    subfolder in the current folder. The subfolder is named after the archive,
+    with extensions removed.
+
+
+@par 1/23/2018, Version 0.4.0
+Demonstration and early alpha release.
+
+Bugs fixed:
+  - Corrected foldershare.info.yml's "configure" line to name the proper
+    route to the module's settings page.
+  - UUID field made visible.
+  - UID field made non-editable.
+
+Module configuration:
+  - REST enable/disable checkbox and section removed from module settings
+    page. This is better done using the REST UI module, which provides
+    important additional settings.
+
+Stream wrapper:
+  - Created FolderShareStream wrapper to handle mappings between local
+    file paths (with numeric names), internal URIs in File entities,
+    and external URLs that must route through access control code.
+  - Changed FolderShare entity to use the FolderShareStream URI for
+    all new File entities.
+  - Tested FolderShareStream with all standard Drupal file field
+    formatters, including "Generic file", and it works transparently.
+    Note that this includes checking the file name extension and adding
+    an appropriate MIME type icon.
+  - Tested FolderShareStream with custom file field formatters and it
+    works as well.
+
+Display modes:
+  - Updated the default display mode to use the File entity's generic
+    'file_default' field formatter, which works fine with URIs using
+    the FolderShareStream wrapper.
+  - Updated the FolderShare entity's default choice for displaying
+    File entity's to use 'file_default' as well.
+  - Marked the old 'foldershare_file_reference_download' field formatter
+    as deprecated. To be deleted in the next release.
+  - Created the "FolderShareMoreLessText" field formatter for formatting
+    long text fields (like the description). The formatter supports
+    setting a crop height and adding more/less buttons to uncrop and
+    recrop that height. An additional Javascript library includes the
+    code to do this.
+
+Files, images, & media:
+  - Added support for images as a file type in a folder. To use the Image
+    module's features, the file must be stored in an 'image' field type, so
+    FolderShare now includes the original 'file' field for generic files
+    and the 'image' field for images. The file's extension is used to
+    select which field will contain the underlying File entity's ID.
+  - Added support for media objects as a file type in a folder. To use the
+    Media module and Media entities, a field is needed to store a Media
+    entity reference. So FolderShare now includes an additional 'media'
+    field that stores a Media entity ID.
+  - The default entity display mode is updated to show image and media
+    objects at the top of the content.
+  - The file download controller now supports downloading images.
+  - The multi-file download controller now supports downloading images.
+  - The commands all support images, except Unarchive (which must have a file).
+  - Zip/unzip support images.
+
+Documentation:
+  - Wrote README.txt, following Drupal 8 guidelines.
+
+Web services:
+  - Added resource for responding to web services requests via the REST module.
+  - Added uncacheable response from web service requests to block cacheing of
+    responses - needed because the default cacheing does not handle ACLs
+    properly.
+  - Added temporary file upload form, used by web service clients only, to
+    upload a local file to a destination file or folder.
+  - Added route for temporary file upload form at /foldershare/upload.
+
+Web services application:
+  - Added FolderShareConnect class for client-side management of a
+    client-server connection to a remote web service resource.
+  - Added FolderShareFormat class to format certain web service responses
+    for human-friendliness, such as for "ls" style output.
+  - Added foldershare application that parses command-line options and
+    prompt input to invoke particular web service requests.
+  - Added temporary test script to test many of the application's commands.
+  - Added script to bundle files together into a stand-alone application.
+  - Added README.txt explaining the client application.
+
+**/

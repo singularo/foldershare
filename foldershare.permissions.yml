@@ -1,0 +1,62 @@
+#
+# Declares role-based access permissions for the module, including
+# those to administer the module, moderate content, author content,
+# and view content.
+#
+# These permissions work together with folder-based access controls:
+#
+# - "administer foldershare" grants a user full access, similar to a 'root'
+#   super-user on a Linux host. An administrator can create content,
+#   view and edit everybody's content, and change ownership on that
+#   content.  Folder-based access controls do not restrict an adminstrator.
+#
+# - "share foldershare" grants a user the ability to create new top-level
+#   folders and adjust how they are shared with the public and
+#   other users.
+#
+# - "author foldershare" grants a user the ability to create new files and
+#   folders (but not top-level folders), and view and edit their own content.
+#   Users also may be granted read and/or write access to top-level folders
+#   owned by other users.
+#
+# - "view foldershare" grants a user the ability to view content, but not
+#   modify it. Users also may be granted read access to top-level folders owned
+#   by other users.
+#
+# In use, a typical site configuration might be:
+#
+# - Grant "administer foldershare" for a small group of trusted users who
+#   can police content and answer customer support requests.
+#
+# - Grant "share foldershare" for managers, supervisors, prinicipal
+#   investigators, and those able to take responsability for making content
+#   public or shared with other users.
+#
+# - Grant "author foldershare" to all authenticated users so that they
+#   can create and edit content. Anyone given "share" permissions hould
+#   be given "author" permission too.
+#
+# - Grant "view foldershare" to all users, including anonymous users, so
+#   that they can view published content. Anyong given "author" permissions
+#   should be given "view" permission too.
+#
+# Administer permissions *do not* grant the user permission to alter
+# module settings. This is strictly reserved for site administrators.
+#
+
+administer foldershare:
+  title: 'Administer files and folders'
+  description: '<br>Administer public, private, and shared files and folders. Create, delete, view, download, edit, and change the ownership of content owned by any user.'
+  restrict access: TRUE
+
+share foldershare:
+  title: 'Create and share top-level folders'
+  description: 'Create and adjust settings for sharable top-level folders that group content that may be made public, kept private, or shared with specific users.'
+
+author foldershare:
+  title: 'Author files and folders'
+  description: 'Create, delete, view, upload, download, and edit files and folders owned by the user, and by other users that grant author access using folder sharing.'
+
+view foldershare:
+  title: 'View files and folders'
+  description: 'View and download files and folders owned by the user, and by other users that grant view access using folder sharing.'
