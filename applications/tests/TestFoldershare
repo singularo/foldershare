@@ -1,0 +1,208 @@
+#!/bin/bash
+#
+# @file
+# Tests the FolderShare command-line application.
+
+# Parameters
+HOST="localhost:8888"
+USERNAME="admin"
+PASSWORD="admin"
+APP="./foldershare"
+
+TITLE_START="[7m"
+TITLE_END="[0m"
+COLOR_TEST_START="[38;5;14m"
+COLOR_TEST_END="[0m"
+
+FS="$APP --host $HOST --username $USERNAME --password $PASSWORD"
+
+
+
+
+
+# Runs a test.
+#
+# The command name and arguments are printed, the command executed,
+# and the exit status checked. If the status is non-zero, the application
+# exits.
+#
+# @param args...
+#   One or more command arguments.
+test() {
+  local cmd=$@
+  echo $TITLE_START$cmd$TITLE_END
+  echo "------------------------------------------------------------------------$COLOR_TEST_START"
+  $FS $cmd
+  status=$?
+  if [ $status -ne 0  ]; then
+    echo "Error $status"
+    exit $status
+  fi
+  echo $COLOR_TEST_END
+}
+
+
+
+
+if [ $# -eq 0 ]; then
+    testName="all"
+else
+    testName=$1
+fi
+
+
+# Show HTTP verbs for connection
+if [ $testName = "all" -o $testName = "http" ]; then
+    test "http"
+fi
+
+# Show server version
+if [ $testName = "all" -o $testName = "version" ]; then
+    test --version
+    test version
+fi
+
+# Show server configuration
+if [ $testName = "all" -o $testName = "config" ]; then
+    test config
+fi
+
+# Show server usage
+if [ $testName = "all" -o $testName = "usage" ]; then
+    test usage
+fi
+
+# Stat /
+if [ $testName = "all" -o $testName = "stat" ]; then
+    test stat /
+    test stat private:/
+    test stat public:/
+    test stat shared:/
+    test stat private://1/
+    test stat public://1/
+    test stat shared://1/
+    test stat private://admin/
+    test stat public://admin/
+    test stat shared://admin/
+    test stat -t /
+    test stat --terse /
+fi
+
+# List /
+if [ $testName = "all" -o $testName = "ls" ]; then
+    test ls /
+    test ls private:/
+    test ls public:/
+    test ls shared:/
+    test ls private://1/
+    test ls public://1/
+    test ls shared://1/
+    test ls private://admin/
+    test ls public://admin/
+    test ls shared://admin/
+    test ls -d /
+    test ls -F /
+    test ls -i /
+    test ls -l /
+    test ls -R /
+    test ls -s /
+    test ls -S /
+    test ls -t /
+    test ls -silFS /
+fi
+
+# Make folders
+if [ $testName = "all" -o $testName = "mkdir" ]; then
+    test ls -lF /
+    test mkdir -v /test1
+    test mkdir -v /test2 /test3 /test4 /test5
+    test ls -lF /
+
+    test ls -lF /test1
+    test mkdir -v /test1/subtest1 /test1/subtest2
+    test ls -lF /test1
+
+    test mkdir -v /test6 /test2/subtest1 /test1/subtest1/subsubtest1
+    test ls -lF /
+    test ls -lF /test2
+    test ls -lF /test1
+
+    test rmdir -v /test1/subtest1/subsubtest1
+    test rmdir -v /test1/subtest1 /test1/subtest2
+    test rmdir -v /test2/subtest1 /test1 /test2 /test3 /test4 /test5 /test6
+    test ls -lF /
+fi
+
+# Remove folders
+if [ $testName = "all" -o $testName = "rmdir" ]; then
+    test mkdir -v /test1
+    test mkdir -v /test1/subtest1 /test1/subtest2
+    test mkdir -v /test1/subtest1/subsubtest1
+    test ls -lF /test1
+
+    test rmdir -v /test1/subtest1/subsubtest1
+    test rmdir -v /test1/subtest1 /test1/subtest2
+    test ls -lF /test1
+
+    test ls -lF /
+    test rmdir -v /test1
+    test ls -lF /
+fi
+
+# Remove files and folders
+if [ $testName = "all" -o $testName = "rm" ]; then
+    test ls -lF /
+    test mkdir -v /test123 /test123/test456
+    test ls -lF /
+    test ls -lF /test123
+
+    test rm -d /test123/test456
+    test ls -lF /test123
+
+    test mkdir -v /test123/test789
+    test ls -lF /test123
+
+    test rm -rf /test123
+    test ls -lF /
+fi
+
+# Move folders
+if [ $testName = "all" -o $testName = "mv" ]; then
+    test ls -lF /
+    test mkdir -v /test123 /test456
+    test ls -lF /
+
+    test mv -v /test123 /test456
+    test ls -lF /
+    test ls -lF /test456
+
+    test mv -v /test456/test123 /
+    test ls -lF /
+
+    test mkdir -v /test123/subtest1
+    test ls -lF /test123
+    test mv -v /test123/subtest1 /test456
+    test ls -lF /test456
+
+    test ls -lF /
+    test mv -v /test123 /123test
+    test ls -lF /
+
+    test rm -rf /123test /test456
+    test ls -lF /
+fi
+
+# Copy folders
+if [ $testName = "all" -o $testName = "cp" ]; then
+    test ls -lF /
+    test mkdir -v /test123
+    test cp -v /test123 /test456
+    test ls -lF /
+
+    test cp -v /test123 /test456
+    test cp -v /test123 /test456/anothertest123
+    test ls -lF /test456
+
+    test rm -rf /test123 /test456
+    test ls -lF /
+fi
