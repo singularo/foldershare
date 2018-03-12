@@ -1,0 +1,46 @@
+{#
+/**
+ * @file
+ * Defines the theme template to show a folder or file view.
+ *
+ * Available variables:
+ * - 'item' = the FolderShare entity, with limited access to
+ *   object properties and methods. Only method names starting with
+ *   'get', 'has', or 'is', and a few common methods such as 'id'
+ *   and 'label' are available.
+ *
+ * - 'url' = the URL of the item.
+ *
+ * - 'title_prefix' and 'title_suffix' = additional output populated
+ *	by modules and intended to be shown before and after the main title.
+ *
+ * - 'attributes' = HTML attributes for the containing element
+ *	(e.g. an <article>).
+ *
+ * - 'title_attributes' = HTML attributes for the title element.
+ *
+ * - 'content_attributes' = HTML attributes for the content element.
+ *
+ * - 'view_mode' = the name of the view mode (e.g. "full").
+ *
+ * - 'page' = TRUE/FALSE indicating if the view is a full page.
+ *
+ * - 'logged_in' = TRUE/FALSE indicating if the user is logged in.
+ *
+ * - 'is_admin' = TRUE/FALSE indicating if the user is an admin.
+ *
+ * @ingroup foldershare
+ */
+#}
+<article{{ attributes }} class="foldershare-content">
+  {% if not page %}
+    {{ title_prefix }}
+    <h2{{ title_attributes }}>
+      <a href="{{ url }}" rel="bookmark">{{ label }}</a>
+    </h2>
+    {{ title_suffix }}
+  {% endif %}
+  <div{{ content_attributes }}>
+    {{ content }}
+  </div>
+</article>

@@ -1,0 +1,19 @@
+{#
+/**
+ * @file
+ * Defines the theme template to show a page with an embeded view.
+ *
+ * Available variables:
+ * - 'attributes' = HTML attributes for the containing element
+ *	(e.g. an <article>).
+ *
+ * - 'content_attributes' = HTML attributes for the content element.
+ *
+ * @ingroup foldershare
+ */
+#}
+<article{{ attributes }} class="foldershare-content">
+  <div{{ content_attributes }}>
+    {{ content }}
+  </div>
+</article>
