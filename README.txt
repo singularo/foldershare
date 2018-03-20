@@ -33,7 +33,7 @@ content for anonymous access.
 
 REQUIREMENTS
 ------------
-The FolderShare module requires Drupal 8.4 or greater.
+The FolderShare module requires Drupal 8.4 or greater (The current alpha version has a known issue with Drupal 8.5.x release). So Drupal core 8.4.5 is recommended for testing.
 
 The module does not require any third-party contributed modules or libraries.
 The module only requires modules included in Drupal core and already enabled by
